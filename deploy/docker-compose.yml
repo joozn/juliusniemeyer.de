@@ -1,0 +1,25 @@
+# juliusniemeyer.de auf dem Server (/opt/website).
+# Kleiner Caddy, der nur die fertigen Dateien aus ./site ausliefert (schreibgeschützt).
+# Erreichbar nur über den gemeinsamen Caddy (Netz "web"), keine eigenen Ports.
+# ./site wird von GitHub Actions per rsync befüllt (Benutzer website-deploy, nur rrsync).
+services:
+  website:
+    image: caddy:2
+    command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv:ro
+    tmpfs:
+      - /data
+      - /config
+    restart: unless-stopped
+    mem_limit: 64m
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

@@ -1,0 +1,10 @@
+
+# --- Testbetrieb (nur mit Mainframe-Login) ---
+website.studioniemeyer.de {
+	encode gzip
+	header X-Robots-Tag "noindex, nofollow"
+	forward_auth studio:8080 {
+		uri /auth/check
+	}
+	reverse_proxy website:80
+}

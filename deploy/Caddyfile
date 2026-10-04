@@ -1,0 +1,23 @@
+# Interner Dateiserver für juliusniemeyer.de (HTTPS macht der gemeinsame Caddy davor).
+{
+	admin off
+	auto_https off
+}
+
+:80 {
+	root * /srv
+	encode zstd gzip
+
+	@static path /images/* /assets/fonts/*
+	header @static Cache-Control "public, max-age=604800"
+	@other not path /images/* /assets/fonts/*
+	header @other Cache-Control "public, max-age=300"
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	file_server
+}
