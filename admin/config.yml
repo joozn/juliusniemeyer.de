@@ -1,0 +1,130 @@
+# Sveltia CMS — admin at https://juliusniemeyer.de/admin
+# Every "Save" commits to GitHub; GitHub Actions rebuilds the site (~1–2 min).
+
+backend:
+  name: github
+  repo: joozn/juliusniemeyer.de
+  branch: main
+  commit_messages:
+    update: "Inhalt aktualisiert: {{slug}}"
+    uploadMedia: "Bild hochgeladen: {{path}}"
+    deleteMedia: "Bild gelöscht: {{path}}"
+
+site_url: https://juliusniemeyer.de
+display_url: https://juliusniemeyer.de
+
+media_folder: images
+public_folder: /images
+
+# Uploaded photos are converted to WebP and scaled to max. 2400 px in the browser
+# before upload, so originals straight from the camera are fine.
+media_libraries:
+  default:
+    config:
+      max_file_size: 50000000
+      transformations:
+        raster_image:
+          format: webp
+          quality: 88
+          width: 2400
+          height: 2400
+
+collections:
+  - name: works
+    label: Werke
+    icon: photo_library
+    files:
+      - name: installation
+        label: Installation
+        file: content/works/installation.json
+        fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Einleitungstext, name: intro, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - &images
+            label: Bilder
+            name: images
+            widget: list
+            collapsed: true
+            summary: "{{fields.caption}}"
+            hint: "Reihenfolge per Drag & Drop ändern. Die Bildreihen werden automatisch angeordnet."
+            fields:
+              - { label: Bild, name: image, widget: image }
+              - label: Bildunterschrift
+                name: caption
+                widget: markdown
+                required: false
+                buttons: [bold, italic, link]
+                editor_components: []
+                hint: "Neue Zeile = Zeilenumbruch, Leerzeile = Absatz."
+      - name: flat-works
+        label: Flat Works
+        file: content/works/flat-works.json
+        fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Einleitungstext, name: intro, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - *images
+      - name: other
+        label: Other
+        file: content/works/other.json
+        fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Einleitungstext, name: intro, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - *images
+
+  - name: texts
+    label: Texte
+    icon: article
+    files:
+      - name: statement
+        label: Artist Statement
+        file: content/statement.json
+        fields:
+          - { label: Titel (linke Spalte), name: title, widget: string }
+          - { label: Mittlere Spalte, name: column_1, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - { label: Rechte Spalte, name: column_2, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+      - name: cv
+        label: CV
+        file: content/cv.json
+        fields:
+          - label: Spalte 1 (CV, Education, …)
+            name: column_1
+            widget: markdown
+            buttons: [bold, italic, link, heading-one, heading-two]
+            editor_components: []
+            hint: "Überschrift 1 = Spaltentitel, Überschrift 2 = Abschnitt. Jede Zeile ein Eintrag."
+          - label: Spalte 2 (Selected Exhibitions)
+            name: column_2
+            widget: markdown
+            buttons: [bold, italic, link, heading-one, heading-two]
+            editor_components: []
+          - label: Spalte 3 (Writing, Teaching and Curating)
+            name: column_3
+            widget: markdown
+            buttons: [bold, italic, link, heading-one, heading-two]
+            editor_components: []
+
+  - name: settings
+    label: Einstellungen
+    icon: settings
+    files:
+      - name: site
+        label: Allgemein
+        file: content/site.json
+        fields:
+          - { label: Datum oben rechts, name: date, widget: string, hint: "z. B. 24.08.26 – Stand der Seite" }
+          - { label: Zitat in der Fußzeile, name: footer_quote, widget: string }
+          - { label: Text unten rechts, name: footer_credit, widget: string }
+          - { label: E-Mail-Adresse, name: email, widget: string }
+          - { label: Beschreibung für Google, name: description, widget: text, hint: "Erscheint in Suchergebnissen. Ca. 150 Zeichen." }
+      - name: impressum
+        label: Impressum
+        file: content/legal/impressum.json
+        fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Text, name: body, widget: markdown, editor_components: [] }
+      - name: datenschutz
+        label: Datenschutz
+        file: content/legal/datenschutz.json
+        fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Text, name: body, widget: markdown, editor_components: [] }
