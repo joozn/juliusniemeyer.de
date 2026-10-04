@@ -18,11 +18,14 @@
 	const galleries = [...document.querySelectorAll('[data-gallery]')];
 
 	function layoutGallery(gallery) {
-		const figures = [...gallery.children];
+		if (gallery.dataset.layout === 'none') return;
+		const figures = [...gallery.children].filter((f) => !f.hidden);
 		// a hair less than the real width, so sub-pixel rounding never wraps a row
 		const width = gallery.getBoundingClientRect().width - 1;
 		const gap = 0.5 * rem();
-		const target = width * (mobile.matches ? 0.6 : 0.3);
+		// optional per-gallery row height: data-row="0.4" data-row-mobile="0.8"
+		const share = mobile.matches ? gallery.dataset.rowMobile || 0.6 : gallery.dataset.row || 0.3;
+		const target = width * share;
 
 		let row = [];
 		let ratioSum = 0;
@@ -84,6 +87,8 @@
 	const lb = document.querySelector('.lightbox');
 	if (!lb) return;
 	const lbImg = lb.querySelector('img');
+	const lbCaption = lb.querySelector('.lb-caption'); // optional
+	const lbCount = lb.querySelector('.lb-count'); // optional
 	let current = [];
 	let index = 0;
 	let lastFocus = null;
@@ -93,6 +98,8 @@
 		const img = current[index].querySelector('img');
 		lbImg.src = img.dataset.full || img.currentSrc || img.src;
 		lbImg.alt = img.alt;
+		if (lbCaption) lbCaption.innerHTML = current[index].querySelector('figcaption')?.innerHTML ?? '';
+		if (lbCount) lbCount.textContent = `${index + 1} / ${current.length}`;
 		// warm up the neighbours
 		[index + 1, index - 1].forEach((n) => {
 			const next = current[(n + current.length) % current.length].querySelector('img');
@@ -101,7 +108,7 @@
 	}
 
 	function open(fig) {
-		current = [...fig.parentElement.children];
+		current = [...fig.parentElement.children].filter((f) => !f.hidden);
 		lastFocus = document.activeElement;
 		show(current.indexOf(fig));
 		lb.hidden = false;
