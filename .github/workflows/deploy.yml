@@ -1,23 +1,22 @@
-# Builds the site and publishes it to GitHub Pages on every push to main
-# (including every "Save" in the CMS).
-name: Deploy website
+# Builds the site on every push to main (including every "Save" in the CMS)
+# and uploads it via rsync to the Hetzner server (/opt/website/site).
+#
+# Upload only runs once the repository variable DEPLOY_HOST is set.
+# Needed: variable DEPLOY_HOST, secrets DEPLOY_SSH_KEY + DEPLOY_KNOWN_HOSTS.
+# The server side restricts the key to rrsync into /opt/website/site.
+name: Build & deploy website
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: deploy
+  cancel-in-progress: false
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,17 +26,17 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Upload to server
+        if: vars.DEPLOY_HOST != ''
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          HOST: ${{ vars.DEPLOY_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          rsync -rlz --checksum --delete --chmod=D755,F644 \
+            -e "ssh -i ~/.ssh/deploy -o BatchMode=yes" \
+            _site/ "website-deploy@$HOST:./"
