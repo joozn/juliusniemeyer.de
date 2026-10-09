@@ -28,3 +28,8 @@ http://127.0.0.1:4173/varianten.html.
   evtl. weitere Varianten.** Entscheidung steht noch aus.
 - Ideen zur Auswahl: eigene Seite pro Werk, DE/EN, Portfolio-PDF, „Aktuell“-Zeile statt Datum oben rechts,
   Bildunterschriften vereinheitlichen („ - “ vs. „ / “, „2. Price“ → „2nd Prize“), Social-Links.
+
+## Architektur
+
+- Gesamtbild aller Apps (mit Julius entschieden 2026-10-09): `C:\dev\ARCHITEKTUR.md`. Vor Arbeiten an Login, Abo, Kontakten, Projekten, Mailversand oder Terminplanung dort nachlesen; bei Widerspruch Julius fragen.
+- juliusniemeyer.de zieht im Zielbild von Cargo auf Hetzner (DNS zurück zu IONOS).
