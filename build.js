@@ -94,7 +94,7 @@ const header = `<header class="bar bar--top">
 
 const footer = `<footer class="bar bar--bottom">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-8">${emailLink('Email,')} <a href="impressum.html">Impressum,</a> <a href="datenschutz.html">Datenschutz</a></div>
+		<div class="span-8">${emailLink('Email,')} <a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de,</a> <a href="impressum.html">Impressum,</a> <a href="datenschutz.html">Datenschutz</a></div>
 		<div class="span-2">${esc(site.footer_quote)}</div>
 		<div class="span-2 right">${esc(site.footer_credit)}</div>
 	</div>
@@ -180,7 +180,7 @@ ${sections}
 	</section>
 
 	<p class="wordmark" aria-hidden="true">studioniemeyer</p>
-	<p class="legal mobile-legal"><a href="impressum.html">Impressum</a>, <a href="datenschutz.html">Datenschutz</a></p>
+	<p class="legal mobile-legal"><a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de</a>, <a href="impressum.html">Impressum</a>, <a href="datenschutz.html">Datenschutz</a></p>
 
 </main>
 
