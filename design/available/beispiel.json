@@ -1,0 +1,103 @@
+{
+	"_hinweis": "Beispieldaten für den Prototyp. Später kommt genau diese Struktur aus SPINE (öffentliche Liste, nur Werke mit 'erscheint auf: juliusniemeyer.de').",
+	"versand": {
+		"poster": { "label": "poster, rolled", "eu": 12 },
+		"print": { "label": "print, flat packed", "eu": 24 },
+		"bild": { "label": "work up to 100 cm, crate", "eu": 95 }
+	},
+	"werke": [
+		{
+			"id": "cgd-poster",
+			"fig": "CGD-25.01",
+			"titel": "chronos – constant growth constant decay",
+			"jahr": 2025,
+			"technik": "poster, offset print",
+			"masse": "84 × 59.4 cm",
+			"art": "edition",
+			"auflage": 30,
+			"verkauft": [1, 2, 3, 5, 8, 9, 12, 14, 20],
+			"reserviert": [6],
+			"preis": 120,
+			"capitalistic": false,
+			"versand": "poster",
+			"ust": 7
+		},
+		{
+			"id": "chronos-entropy",
+			"fig": "CGD-25.16",
+			"titel": "chronos – entropy",
+			"jahr": 2025,
+			"technik": "print, from “chronos – constant growth constant decay”",
+			"masse": "42 × 29.7 cm",
+			"art": "edition",
+			"auflage": 10,
+			"verkauft": [1, 4],
+			"reserviert": [],
+			"preis": 150,
+			"capitalistic": true,
+			"versand": "print",
+			"ust": 7
+		},
+		{
+			"id": "berlin",
+			"fig": "BER-19.01",
+			"titel": "berlin",
+			"jahr": 2019,
+			"technik": "multilayered silkscreen on cardboard (noise series)",
+			"masse": "70 × 100 cm",
+			"art": "edition",
+			"auflage": 12,
+			"verkauft": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			"reserviert": [],
+			"preis": 400,
+			"capitalistic": false,
+			"versand": "bild",
+			"ust": 7
+		},
+		{
+			"id": "sources-of-power",
+			"fig": "SOP-25.01",
+			"titel": "sources of power",
+			"jahr": 2025,
+			"technik": "airbrush and 3d print painting (armoured painting series)",
+			"masse": "120 × 80 cm",
+			"art": "unikat"
+		},
+		{
+			"id": "quantum-interferenz",
+			"fig": "QUI-26.01",
+			"titel": "quantum interferenz",
+			"jahr": 2026,
+			"technik": "airbrush and 3d print painting (armoured painting series)",
+			"masse": "100 × 70 cm",
+			"art": "unikat"
+		},
+		{
+			"id": "data-system",
+			"fig": "DS1-26.01",
+			"titel": "data system no.1",
+			"jahr": 2026,
+			"technik": "airbrush and 3d print painting (armoured painting series)",
+			"masse": "60 × 80 cm",
+			"art": "unikat"
+		},
+		{
+			"id": "gold-digger",
+			"fig": "GDG-25.01",
+			"titel": "gold digger",
+			"jahr": 2025,
+			"technik": "airbrush and 3d print painting (armoured painting series)",
+			"masse": "100 × 70 cm",
+			"art": "unikat"
+		},
+		{
+			"id": "token",
+			"fig": "TOK-23.01",
+			"titel": "token",
+			"jahr": 2023,
+			"technik": "mdf, lacquer",
+			"masse": "Ø 40 cm",
+			"art": "unikat"
+		}
+	]
+}

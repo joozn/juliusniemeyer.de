@@ -1,0 +1,149 @@
+/* "Available" prototype — not live */
+
+.bar--top nav a.is-here { color: var(--text); }
+.available { padding-top: calc(var(--bar-h) + 2.5rem); }
+
+.av-list {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 3.5rem var(--gutter);
+	padding: 1.2rem 0 7rem;
+}
+.av-item figure {
+	position: relative;
+	margin: 0 0 0.9rem;
+}
+.av-item img {
+	display: block;
+	width: 100%;
+	height: 22rem;
+	object-fit: contain;
+	object-position: left bottom;
+	filter: contrast(1.105) saturate(1.105);
+}
+.av-item figure[data-fig]::before {
+	content: "fig. " attr(data-fig);
+	position: absolute;
+	left: 0;
+	top: -1.3rem;
+	font: 400 0.75rem var(--mono);
+	color: var(--text);
+}
+
+.av-info {
+	font: 400 0.8rem/1.4 var(--mono);
+	padding-left: 0.8rem;
+	border-left: 0.1rem solid var(--line);
+}
+.av-info p { margin: 0 0 0.6rem; }
+.av-title {
+	font-family: var(--sans);
+	font-size: 1.1rem;
+	font-weight: 480;
+	line-height: 1.15;
+}
+.av-info b { font-weight: 600; }
+.av-next, .av-label, .av-note, .dim { color: rgba(var(--ink), 0.6); }
+.av-cap { color: var(--text); border-left: 0.4rem solid var(--link); padding-left: 0.5rem; }
+
+.av-numbers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	margin: 0 0 0.8rem;
+}
+.av-numbers button {
+	min-width: 2.1rem;
+	padding: 0.25rem 0.3rem;
+	border: 0.1rem solid rgba(var(--ink), 0.5);
+	background: none;
+	color: var(--text);
+	font: 400 0.75rem var(--mono);
+}
+.av-numbers button:not(:disabled):hover { border-color: var(--link); background: var(--link); }
+.av-numbers .sold { text-decoration: line-through; opacity: 0.3; }
+.av-numbers .reserved { border-style: dashed; opacity: 0.5; }
+.av-numbers .is-selected { background: var(--link); border-color: var(--link); color: #fff; }
+
+.av-primary,
+.av-buy,
+.av-ask {
+	padding: 0.5rem 0.8rem;
+	border: 0;
+	background: var(--link);
+	color: #fff;
+	font: 400 0.8rem var(--mono);
+}
+.av-primary:hover,
+.av-buy:not(:disabled):hover,
+.av-ask:hover { background: #fff; color: var(--bg); }
+.av-buy:disabled {
+	background: none;
+	color: rgba(var(--ink), 0.6);
+	outline: 0.1rem solid rgba(var(--ink), 0.35);
+	outline-offset: -0.1rem;
+}
+.av-link {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--link);
+	font: inherit;
+}
+.av-link:hover { background: var(--link); color: var(--bg); }
+
+/* dialog */
+.av-dialog {
+	position: fixed;
+	inset: 0;
+	z-index: 150;
+	display: grid;
+	place-items: center;
+	padding: var(--side);
+	background: rgba(10, 11, 29, 0.6);
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+}
+.av-dialog[hidden] { display: none; }
+.av-box {
+	width: min(30rem, 100%);
+	max-height: 85vh;
+	overflow: auto;
+	padding: 1rem 1.2rem 1.2rem;
+	background: var(--bg);
+	border: 0.1rem solid var(--line);
+	border-top: 0.4rem solid var(--link);
+	font: 400 0.85rem/1.45 var(--mono);
+}
+.av-box p { margin: 0 0 0.9rem; }
+.av-box ul { margin: 0 0 0.9rem; padding-left: 1.1rem; }
+.av-step { color: rgba(var(--ink), 0.6); }
+.av-actions { display: flex; gap: 1.4rem; align-items: center; margin-top: 1.2rem !important; }
+.av-sum { width: 100%; border-collapse: collapse; margin: 0 0 1rem; }
+.av-sum td { padding: 0.25rem 0; border-bottom: 0.1rem solid rgba(var(--ink), 0.25); }
+.av-sum td + td { text-align: right; }
+.av-sum .total td { border-bottom: 0; font-weight: 600; }
+.av-sum .dim td { color: rgba(var(--ink), 0.6); }
+.av-form label { display: block; margin-bottom: 0.3rem; }
+.av-form input[type="email"] {
+	width: 100%;
+	padding: 0.5rem 0.6rem;
+	border: 0.1rem solid var(--line);
+	background: none;
+	color: var(--text);
+	font: inherit;
+}
+.av-form input[type="email"]:focus { outline: 0; border-color: var(--link); }
+.av-check { display: flex !important; gap: 0.6rem; align-items: baseline; margin-bottom: 0.4rem !important; }
+.av-check input { accent-color: #0000ff; }
+
+@media (max-width: 1100px) {
+	.av-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+	.av-list { grid-template-columns: 1fr; }
+	.av-item img { height: auto; max-height: 70vh; }
+}
+
+/* the measuring readout would cover buy buttons here; the crosshair lines stay */
+.mess .out { display: none; }
