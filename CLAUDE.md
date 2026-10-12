@@ -9,13 +9,14 @@ Website von Julius (Künstler). Kommunikation auf Deutsch. Technik und Betrieb s
 - Nach jeder Änderung das Ergebnis in Chrome zeigen (lokal: `npm start` → http://127.0.0.1:4173;
   Port 8080 gehört einer anderen App).
 
-## Stand (05.10.2026)
+## Stand (12.10.2026)
 
-- Testbetrieb auf https://website.studioniemeyer.de (nur mit Mainframe-Login), Kachel „Website“ im Mainframe.
-- juliusniemeyer.de zeigt noch auf Cargo (Nameserver ns1/ns2.cargo.site). Umstellung erst nach ein paar Tagen
-  Testbetrieb und Julius' OK: Nameserver bei IONOS zurücksetzen, A-Records `@` und `www` → 46.224.113.239,
-  Caddy-Block durch `deploy/Caddyfile.live.snippet` ersetzen, Kachel-URL in `C:\dev\mainframe\server\apps.json` anpassen.
-  Danach kann Julius Cargo kündigen.
+- **Live auf https://juliusniemeyer.de** (seit 12.10.2026, Hetzner). DNS bei IONOS (Nameserver zurückgesetzt), A `@`/`www`
+  → 46.224.113.239, kein AAAA. Mail bleibt bei IONOS (MX mx00/mx01.ionos.de, DKIM, SPF) – nicht anfassen.
+- Caddy: Block `juliusniemeyer.de` + `www` (Weiterleitung) aus `deploy/Caddyfile.live.snippet` angehängt,
+  Sicherung `/opt/caddy/Caddyfile.bak-20261012-163953`. Zertifikat Let's Encrypt, verlängert Caddy selbst.
+- Noch offen: Testbetrieb-Block `website.studioniemeyer.de` entfernen, wenn Julius zufrieden ist; Kachel-URL in
+  `C:\dev\mainframe\serverpps.json` auf juliusniemeyer.de; danach kann Julius Cargo kündigen.
 - CMS-Login (GitHub-Zugangsschlüssel) ist noch nicht eingerichtet.
 
 ## Design: Feinschliff übernommen (12.10.2026)
