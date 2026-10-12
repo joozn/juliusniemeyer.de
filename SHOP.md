@@ -74,7 +74,7 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
    Nummernwahl und Capitalistic selling). ← **steht**, als Seite `available.html` im normalen Build
    (`build.js` → `availablePage`, `assets/available.js|css`), Link „Available“ in eigener Spalte der oberen Leiste.
    Daten noch Beispiel: `content/available.json` (Struktur wie später aus SPINE), Kauf/Anfrage nur simuliert.
-   **Vor dem Umzug von juliusniemeyer.de** Beispieldaten durch SPINE ersetzen oder Seite + Link ausblenden.
+   Live steht „Coming soon“; Shop-Vorschau lokal mit `SHOP_PREVIEW=1 npm run build`.
 2. **SPINE + Konto:** öffentliche Liste und Reservierung in SPINE, Einmalzahlung in Konto, Testmodus auf dem Server
    (Server-Änderungen nur mit Julius' OK).
 3. **Zentrale, Kontor, Mainframe** anbinden; Rechtstexte (AGB, Widerruf, Versand, Datenschutz); Umzug
