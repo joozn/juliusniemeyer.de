@@ -15,8 +15,8 @@ Website von Julius (Künstler). Kommunikation auf Deutsch. Technik und Betrieb s
   → 46.224.113.239, kein AAAA. Mail bleibt bei IONOS (MX mx00/mx01.ionos.de, DKIM, SPF) – nicht anfassen.
 - Caddy: Block `juliusniemeyer.de` + `www` (Weiterleitung) aus `deploy/Caddyfile.live.snippet` angehängt,
   Sicherung `/opt/caddy/Caddyfile.bak-20261012-163953`. Zertifikat Let's Encrypt, verlängert Caddy selbst.
-- Noch offen: Testbetrieb-Block `website.studioniemeyer.de` entfernen, wenn Julius zufrieden ist; Kachel-URL in
-  `C:\dev\mainframe\server\apps.json` auf juliusniemeyer.de; danach kann Julius Cargo kündigen.
+- Noch offen: Testbetrieb-Block `website.studioniemeyer.de` entfernen, wenn Julius zufrieden ist; danach kann Julius Cargo kündigen.
+  Mainframe-Kachel „Website“ zeigt seit 12.10.2026 auf juliusniemeyer.de.
 - CMS-Login (GitHub-Zugangsschlüssel) ist noch nicht eingerichtet.
 
 ## Design: Feinschliff übernommen (12.10.2026)
