@@ -456,8 +456,9 @@ ${footer}
 	assignFigs();
 	fs.writeFileSync(path.join(OUT, 'index.html'), indexPage(img));
 	fs.writeFileSync(path.join(OUT, 'available.html'), SHOP_PREVIEW ? availablePage(img) : comingSoonPage());
+	// Always built (noindex): Stripe test payments redirect here even while Available shows "Coming soon".
+	fs.writeFileSync(path.join(OUT, 'danke.html'), thanksPage());
 	if (SHOP_PREVIEW) {
-		fs.writeFileSync(path.join(OUT, 'danke.html'), thanksPage());
 		console.log(`  shop preview: available.html with ${available.api ? 'SPINE data' : 'example data'}`);
 	}
 	legal.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
