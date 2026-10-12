@@ -147,3 +147,10 @@
 
 /* the measuring readout would cover buy buttons here; the crosshair lines stay */
 .mess .out { display: none; }
+
+.av-frames { margin: 0 0 0.8rem; }
+.av-frames .av-label { margin-bottom: 0.3rem; }
+.av-frames .av-check { margin-bottom: 0.15rem !important; }
+.av-frame-incl { color: rgba(var(--ink), 0.6); }
+
+.av-info [hidden] { display: none !important; }

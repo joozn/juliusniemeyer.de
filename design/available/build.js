@@ -25,6 +25,7 @@ function item(w) {
 	if (w.art === 'unikat') {
 		return `<article class="av-item av-unikat" data-id="${w.id}">${fig}<div class="av-info">${meta}
 			<p class="av-price">unique work · price on request</p>
+			${w.gerahmt ? '<p class="av-frame-incl">framed · frame included</p>' : ''}
 			<p><button type="button" class="av-ask">Request</button></p></div></article>`;
 	}
 	return `<article class="av-item av-edition" data-id="${w.id}">${fig}<div class="av-info">${meta}
@@ -32,6 +33,7 @@ function item(w) {
 		<p class="av-cap"${w.capitalistic ? '' : ' hidden'}>capitalistic selling — the price doubles with every copy sold</p>
 		<p class="av-label">choose your number</p>
 		<div class="av-numbers" role="group" aria-label="edition numbers"></div>
+		<div class="av-frames" role="radiogroup" aria-label="frame"></div>
 		<p class="av-ship"></p>
 		<p><button type="button" class="av-buy" disabled>Choose a number</button></p></div></article>`;
 }

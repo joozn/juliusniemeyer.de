@@ -3,7 +3,14 @@
 	"versand": {
 		"poster": { "label": "poster, rolled", "eu": 12 },
 		"print": { "label": "print, flat packed", "eu": 24 },
-		"bild": { "label": "work up to 100 cm, crate", "eu": 95 }
+		"gerahmt-klein": { "label": "framed up to 60 cm, crate", "eu": 45 },
+		"gerahmt-gross": { "label": "framed up to 100 cm, crate", "eu": 95 }
+	},
+	"rahmen": {
+		"ohne": { "label": "unframed", "preis": 0 },
+		"eiche-a2": { "label": "oak frame, museum glass", "preis": 180, "ust": 19, "versand": "gerahmt-gross" },
+		"eiche-a3": { "label": "oak frame, museum glass", "preis": 120, "ust": 19, "versand": "gerahmt-klein" },
+		"schwarz-a3": { "label": "black aluminium frame", "preis": 90, "ust": 19, "versand": "gerahmt-klein" }
 	},
 	"werke": [
 		{
@@ -15,10 +22,12 @@
 			"masse": "84 × 59.4 cm",
 			"art": "edition",
 			"auflage": 30,
+			"ap": 1,
 			"verkauft": [1, 2, 3, 5, 8, 9, 12, 14, 20],
 			"reserviert": [6],
 			"preis": 120,
 			"capitalistic": false,
+			"rahmen": ["ohne", "eiche-a2"],
 			"versand": "poster",
 			"ust": 7
 		},
@@ -31,27 +40,31 @@
 			"masse": "42 × 29.7 cm",
 			"art": "edition",
 			"auflage": 10,
+			"ap": 2,
 			"verkauft": [1, 4],
 			"reserviert": [],
 			"preis": 150,
 			"capitalistic": true,
+			"rahmen": ["ohne", "eiche-a3", "schwarz-a3"],
 			"versand": "print",
 			"ust": 7
 		},
 		{
-			"id": "berlin",
-			"fig": "BER-19.01",
-			"titel": "berlin",
-			"jahr": 2019,
-			"technik": "multilayered silkscreen on cardboard (noise series)",
-			"masse": "70 × 100 cm",
+			"id": "chronos-time",
+			"fig": "CGD-25.13",
+			"titel": "chronos – time perception",
+			"jahr": 2025,
+			"technik": "print, from “chronos – constant growth constant decay”",
+			"masse": "42 × 29.7 cm",
 			"art": "edition",
-			"auflage": 12,
-			"verkauft": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			"auflage": 5,
+			"ap": 1,
+			"verkauft": [1, 2, 3, 4, 5],
 			"reserviert": [],
-			"preis": 400,
-			"capitalistic": false,
-			"versand": "bild",
+			"preis": 150,
+			"capitalistic": true,
+			"rahmen": ["ohne", "eiche-a3"],
+			"versand": "print",
 			"ust": 7
 		},
 		{
@@ -61,7 +74,8 @@
 			"jahr": 2025,
 			"technik": "airbrush and 3d print painting (armoured painting series)",
 			"masse": "120 × 80 cm",
-			"art": "unikat"
+			"art": "unikat",
+			"gerahmt": true
 		},
 		{
 			"id": "quantum-interferenz",
@@ -70,7 +84,18 @@
 			"jahr": 2026,
 			"technik": "airbrush and 3d print painting (armoured painting series)",
 			"masse": "100 × 70 cm",
-			"art": "unikat"
+			"art": "unikat",
+			"gerahmt": true
+		},
+		{
+			"id": "berlin",
+			"fig": "BER-19.01",
+			"titel": "berlin",
+			"jahr": 2019,
+			"technik": "multilayered silkscreen on cardboard (noise series)",
+			"masse": "70 × 100 cm",
+			"art": "unikat",
+			"gerahmt": true
 		},
 		{
 			"id": "data-system",
@@ -79,7 +104,8 @@
 			"jahr": 2026,
 			"technik": "airbrush and 3d print painting (armoured painting series)",
 			"masse": "60 × 80 cm",
-			"art": "unikat"
+			"art": "unikat",
+			"gerahmt": true
 		},
 		{
 			"id": "gold-digger",
@@ -88,7 +114,8 @@
 			"jahr": 2025,
 			"technik": "airbrush and 3d print painting (armoured painting series)",
 			"masse": "100 × 70 cm",
-			"art": "unikat"
+			"art": "unikat",
+			"gerahmt": true
 		},
 		{
 			"id": "token",
@@ -97,7 +124,8 @@
 			"jahr": 2023,
 			"technik": "mdf, lacquer",
 			"masse": "Ø 40 cm",
-			"art": "unikat"
+			"art": "unikat",
+			"gerahmt": true
 		}
 	]
 }

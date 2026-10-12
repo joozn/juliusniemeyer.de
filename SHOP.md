@@ -29,6 +29,16 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
   - **„Capitalistic selling“**, pro Edition zuschaltbar: Mit jedem Verkauf verdoppelt sich der Preis
     (aktueller Preis = Startpreis × 2^verkaufte Exemplare). Preis wird immer serverseitig berechnet und auf der Seite
     live angezeigt, nie aus dem Browser übernommen.
+  - **Artist Proofs:** Jede Edition zeigt „edition of N + 1 AP“; die Zahl der APs ist in SPINE pro Edition
+    einstellbar (z. B. + 2 AP). APs werden nicht über den Shop verkauft.
+  - **Capitalistic selling ausverkauft:** kein „next copy“ mehr, stattdessen nur „last copy was sold for: <Preis>“.
+- **Rahmen:**
+  - Unikate sind fertig gerahmt, der Rahmen ist im Preis enthalten („framed · frame included“).
+  - Editionen (v. a. Poster/Drucke) normalerweise ungerahmt; pro Edition wählbare Rahmenoptionen mit Aufpreis
+    (z. B. Eiche mit Museumsglas). Rahmenpreis kommt oben drauf und verdoppelt sich nicht mit; gerahmt gilt ein eigenes
+    Versand-Schema (Kiste). Rahmen-Optionen zentral in SPINE pflegen und je Edition zuordnen.
+  - Offen: Baut Julius die Rahmen selbst oder ein Rahmenbauer? Steuersatz für den Rahmen (im Prototyp 19 %
+    getrennt ausgewiesen) mit Steuerberatung klären.
 - **Versand:** EU-weit direkt kaufbar, weltweit nur auf Anfrage. Versandkosten pro Werk; dazu wiederverwendbare
   Versand-Schemata (z. B. eins für alle Exemplare einer Edition).
 - **Umsatzsteuer:** Julius ist kein Kleinunternehmer. Kunst mit 7 %; Steuersatz trotzdem pro Werk speichern

@@ -16,15 +16,39 @@
 	/* ---------- editions ---------- */
 
 	const selected = {};
+	const frameOf = {}; // chosen frame option per edition
+	const frame = (w) => data.rahmen[frameOf[w.id] || (w.rahmen || ['ohne'])[0]];
+	const shipping = (w) => data.versand[frame(w).versand || w.versand];
 	function renderEdition(el) {
 		const w = works[el.dataset.id];
 		const sold = new Set(w.verkauft);
 		const reserved = new Set(w.reserviert);
 		const free = w.auflage - sold.size - reserved.size;
+		const soldOut = sold.size >= w.auflage;
 		const p = price(w);
-		$('.av-price', el).innerHTML =
-			`edition of ${w.auflage} · <b>${free}</b> available · <b>${euro(p)}</b>` + (w.capitalistic && free > 1 ? ` <span class="av-next">(next copy ${euro(p * 2)})</span>` : '');
-		const ship = data.versand[w.versand];
+		const ap = `edition of ${w.auflage} + ${w.ap ?? 1} AP`;
+		$('.av-price', el).innerHTML = soldOut
+			? `${ap} · sold out` + (w.capitalistic ? ` · last copy was sold for: <b>${euro(w.preis * 2 ** (sold.size - 1))}</b>` : '')
+			: `${ap} · <b>${free}</b> available · <b>${euro(p)}</b>` + (w.capitalistic && free > 1 ? ` <span class="av-next">(next copy ${euro(p * 2)})</span>` : '');
+		$('.av-label', el).hidden = soldOut;
+		$('.av-numbers', el).hidden = soldOut;
+		$('.av-frames', el).hidden = soldOut || (w.rahmen || []).length < 2;
+		$('.av-ship', el).hidden = soldOut;
+		$('.av-buy', el).hidden = soldOut;
+
+		// frame options (price on top of the edition price; not part of the doubling)
+		const frames = $('.av-frames', el);
+		const current = frameOf[w.id] || (w.rahmen || ['ohne'])[0];
+		frames.innerHTML =
+			'<p class="av-label">frame</p>' +
+			(w.rahmen || [])
+				.map((id) => {
+					const r = data.rahmen[id];
+					return `<label class="av-check"><input type="radio" name="frame-${w.id}" value="${id}"${id === current ? ' checked' : ''}> ${esc(r.label)}${r.preis ? ` + ${euro(r.preis)}` : ''}</label>`;
+				})
+				.join('');
+
+		const ship = shipping(w);
 		$('.av-ship', el).innerHTML = `shipping EU ${euro(ship.eu)} · outside the EU <button type="button" class="av-link av-world">on request</button>`;
 		const box = $('.av-numbers', el);
 		box.innerHTML = '';
@@ -42,9 +66,14 @@
 		const buy = $('.av-buy', el);
 		const n = selected[w.id];
 		buy.disabled = !n || free < 1;
-		buy.textContent = free < 1 ? 'Sold out' : n ? `Buy no. ${n}/${w.auflage} — ${euro(p)}` : 'Choose a number';
+		buy.textContent = free < 1 ? 'Currently reserved' : n ? `Buy no. ${n}/${w.auflage} — ${euro(p + frame(w).preis)}` : 'Choose a number';
 	}
 	$$('.av-edition').forEach((el) => {
+		el.addEventListener('change', (e) => {
+			if (!e.target.matches('.av-frames input')) return;
+			frameOf[el.dataset.id] = e.target.value;
+			renderEdition(el);
+		});
 		el.addEventListener('click', (e) => {
 			const w = works[el.dataset.id];
 			const nb = e.target.closest('.av-numbers button');
@@ -86,17 +115,25 @@
 		const n = selected[w.id];
 		if (!n) return;
 		const p = price(w);
-		const ship = data.versand[w.versand].eu;
+		const f = frame(w);
+		const ship = shipping(w);
+		const cents = (x) => Math.round(x * 100) / 100;
 		w.reserviert.push(n); // live: SPINE reserves the number for 30 min
 		renderEdition(el);
 		open(`
 			<p class="av-step">Checkout · prototype</p>
 			<p class="av-title">${esc(w.titel)}, no. ${n}/${w.auflage}</p>
 			<table class="av-sum">
-				<tr><td>price</td><td>${euro(p)}</td></tr>
-				<tr class="dim"><td>incl. ${w.ust} % VAT</td><td>${euro(Math.round(vatOf(p, w.ust) * 100) / 100)}</td></tr>
-				<tr><td>shipping EU (${esc(data.versand[w.versand].label)})</td><td>${euro(ship)}</td></tr>
-				<tr class="total"><td>total</td><td>${euro(p + ship)}</td></tr>
+				<tr><td>edition</td><td>${euro(p)}</td></tr>
+				<tr class="dim"><td>incl. ${w.ust} % VAT</td><td>${euro(cents(vatOf(p, w.ust)))}</td></tr>
+				${
+					f.preis
+						? `<tr><td>${esc(f.label)}</td><td>${euro(f.preis)}</td></tr>
+				<tr class="dim"><td>incl. ${f.ust} % VAT</td><td>${euro(cents(vatOf(f.preis, f.ust)))}</td></tr>`
+						: `<tr><td>unframed</td><td>—</td></tr>`
+				}
+				<tr><td>shipping EU (${esc(ship.label)})</td><td>${euro(ship.eu)}</td></tr>
+				<tr class="total"><td>total</td><td>${euro(p + f.preis + ship.eu)}</td></tr>
 			</table>
 			<p>No. ${n} is reserved for you for 30 minutes. Next you would enter your address and pay on Stripe's checkout page (EU addresses).</p>
 			<p class="av-actions"><button type="button" class="av-primary av-pay">Simulate payment</button> <button type="button" class="av-link av-cancel">Cancel</button></p>`);
@@ -118,7 +155,13 @@
 				<p class="av-step">Paid · prototype</p>
 				<p class="av-title">Thank you — ${esc(w.titel)}, no. ${n}/${w.auflage}</p>
 				<p>You receive an order confirmation by email. Julius receives an action message with the order, the payment and your address, and ships the work.</p>
-				${w.capitalistic ? `<p class="av-cap">capitalistic selling: the next copy now costs ${euro(price(w))}.</p>` : ''}
+				${
+					!w.capitalistic
+						? ''
+						: w.verkauft.length >= w.auflage
+							? `<p class="av-cap">capitalistic selling: this was the last copy — sold for ${euro(p)}.</p>`
+							: `<p class="av-cap">capitalistic selling: the next copy now costs ${euro(price(w))}.</p>`
+				}
 				<p class="av-actions"><button type="button" class="av-primary av-close">Close</button></p>`);
 		});
 	}
