@@ -91,6 +91,11 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
      `…/inquiry` (Browser ruft SPINE direkt auf); `…/status` als Liste `[{id, status, verkauft, reserviert, preis}]`.
    - Noch nicht gebaut: Unikat mit `modus: kauf` (wird vorerst als „auf Anfrage“ gezeigt).
    - Test lokal: `SHOP_PREVIEW=1 SPINE_URL=http://127.0.0.1:3000 npm start`.
+   - `fig` darf SPINE je Werk mitschicken (Julius, 12.10.2026; zuerst im Vertrag ergänzen).
+   - **Rechtstexte als Entwurf** (12.10.2026): `content/legal/agb.json`, `widerruf.json`, `versand.json` (`entwurf: true`,
+     nur mit `SHOP_PREVIEW` gebaut, verlinkt auf available.html). Stellen mit [OFFEN: …] klärt Julius; vor Livegang
+     anwaltlich prüfen, `entwurf` entfernen, Datenschutz um Shop (Stripe, SPINE, Zentrale) ergänzen und die seit
+     19.06.2026 vorgeschriebene elektronische Widerrufsfunktion bauen.
 2. **SPINE + Konto:** öffentliche Liste und Reservierung in SPINE, Einmalzahlung in Konto, Testmodus auf dem Server
    (Server-Änderungen nur mit Julius' OK).
 3. **Zentrale, Kontor, Mainframe** anbinden; Rechtstexte (AGB, Widerruf, Versand, Datenschutz); Mail-Anbieter wählen; dann live.

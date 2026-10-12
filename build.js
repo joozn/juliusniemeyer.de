@@ -26,7 +26,8 @@ const cv = read('cv.json');
 const KANAL = 'juliusniemeyer';
 const SPINE_URL = (process.env.SPINE_URL || '').replace(/\/$/, '');
 let available = read('available.json');
-const legal = ['impressum', 'datenschutz'].map((n) => ({ name: n, ...read(`legal/${n}.json`) }));
+// agb, widerruf, versand are drafts (entwurf: true) and only built with SHOP_PREVIEW until they are checked.
+const legal = ['impressum', 'datenschutz', 'agb', 'widerruf', 'versand'].map((n) => ({ name: n, ...read(`legal/${n}.json`) }));
 
 // Date top right = state of the document: day of the last commit (falls back to today).
 const stand = (() => {
@@ -389,7 +390,8 @@ ${header('available')}
 		<div class="span-4">
 			<p>Works currently available. <em>Editions</em> can be bought directly within the EU — choose the number you want.
 			<em>Unique works</em> on request: you receive a PDF dossier for each work by email. Shipping outside the EU on request.</p>
-			<p class="av-note">Prices incl. VAT, plus shipping. In Munich: delivery or pickup by appointment.${available.api ? '' : ' Prototype with example data — nothing is sold here.'}</p>
+			<p class="av-note">Prices incl. VAT, plus shipping. In Munich: delivery or pickup by appointment.
+			<a href="agb.html">Terms (AGB)</a>, <a href="widerruf.html">right of withdrawal</a>, <a href="versand.html">shipping</a>.${available.api ? '' : ' Prototype with example data — nothing is sold here.'}</p>
 		</div>
 	</section>
 
@@ -461,7 +463,8 @@ ${footer}
 	if (SHOP_PREVIEW) {
 		console.log(`  shop preview: available.html with ${available.api ? 'SPINE data' : 'example data'}`);
 	}
-	legal.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
+	const pages = legal.filter((p) => SHOP_PREVIEW || !p.entwurf);
+	pages.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-	console.log(`built ${img.size} images, ${2 + legal.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
+	console.log(`built ${img.size} images, ${3 + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
 })();
