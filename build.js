@@ -146,12 +146,12 @@ const worksNav = `Works: ${works.map((w) => `<a href="./#${w.anchor}">${esc(w.ti
 
 const header = `<header class="bar bar--top">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-8"><a href="./#top" class="home">studioniemeyer</a>${aktuell}</div>
+		<div class="span-8"><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
 		<nav class="span-2" aria-label="Works">${worksNav}</nav>
 		<div class="span-2 right">${stand}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
-		<div><a href="./#top" class="home">studioniemeyer</a>${aktuell}</div>
+		<div><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
 		<div class="right">${stand}</div>
 	</div>
 	<div class="progress" aria-hidden="true"></div>
