@@ -79,10 +79,21 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
    (`build.js` → `availablePage`, `assets/available.js|css`), Link „Available“ in eigener Spalte der oberen Leiste.
    Daten noch Beispiel: `content/available.json` (Struktur wie später aus SPINE), Kauf/Anfrage nur simuliert.
    Live steht „Coming soon“; Shop-Vorschau lokal mit `SHOP_PREVIEW=1 npm run build`.
+   **Website an SPINE angebunden (12.10.2026):** Mit `SPINE_URL` liest der Build die Liste
+   (`GET <SPINE_URL>/api/public/shop/juliusniemeyer`), die Seite lädt `…/status` live nach und schickt Kauf
+   (`POST …/checkout {work, number?, frame, delivery}`, nie einen Preis) und Anfrage
+   (`POST …/inquiry {email, works, subject, website, t}`; `website` = Honigtopf, muss leer sein; `t` = Ladezeitpunkt in ms)
+   an SPINE. Ohne `SPINE_URL` oder wenn SPINE nicht antwortet: Beispieldaten, Kauf/Anfrage simuliert.
+   - SPINE-Werke brauchen eine `fig`-Nummer für das Bild: entweder von SPINE oder per `id` aus `content/available.json`.
+   - SPINE schickt den **aktuellen** Preis; die Seite rechnet für die Anzeige auf den Startpreis zurück.
+   - Danke-Seite `danke.html?o=<orderId>` (= `successUrl`), `cancelUrl` = `https://juliusniemeyer.de/available.html`.
+   - Was SPINE dafür zusätzlich braucht: **CORS** für `https://juliusniemeyer.de` auf `…/status`, `…/checkout`,
+     `…/inquiry` (Browser ruft SPINE direkt auf); `…/status` als Liste `[{id, status, verkauft, reserviert, preis}]`.
+   - Noch nicht gebaut: Unikat mit `modus: kauf` (wird vorerst als „auf Anfrage“ gezeigt).
+   - Test lokal: `SHOP_PREVIEW=1 SPINE_URL=http://127.0.0.1:3000 npm start`.
 2. **SPINE + Konto:** öffentliche Liste und Reservierung in SPINE, Einmalzahlung in Konto, Testmodus auf dem Server
    (Server-Änderungen nur mit Julius' OK).
-3. **Zentrale, Kontor, Mainframe** anbinden; Rechtstexte (AGB, Widerruf, Versand, Datenschutz); Umzug
-   juliusniemeyer.de von Cargo; Mail-Anbieter wählen; dann live.
+3. **Zentrale, Kontor, Mainframe** anbinden; Rechtstexte (AGB, Widerruf, Versand, Datenschutz); Mail-Anbieter wählen; dann live.
 
 ## Offen
 

@@ -21,8 +21,11 @@ const works = [
 ].map((w) => ({ ...w, ...read(w.file) }));
 const statement = read('statement.json');
 const cv = read('cv.json');
-// works on offer (shop). Example data until SPINE delivers it, see SHOP.md
-const available = read('available.json');
+// works on offer (shop). Comes from SPINE when SPINE_URL is set (contract: C:\dev_apps\mainframe\docserkauf.md),
+// otherwise example data. content/available.json also maps SPINE work ids to fig. numbers (images stay on the website).
+const KANAL = 'juliusniemeyer';
+const SPINE_URL = (process.env.SPINE_URL || '').replace(/\/$/, '');
+let available = read('available.json');
 const legal = ['impressum', 'datenschutz'].map((n) => ({ name: n, ...read(`legal/${n}.json`) }));
 
 // Date top right = state of the document: day of the last commit (falls back to today).
@@ -291,8 +294,33 @@ ${footer}
 }
 
 // Until the shop runs with real data from SPINE the page says "coming soon".
-// Work on the shop locally: SHOP_PREVIEW=1 npm run build (never set in GitHub Actions).
+// Work on the shop locally: SHOP_PREVIEW=1 npm run build (never set in GitHub Actions);
+// with SPINE_URL=http://127.0.0.1:3000 as well, the page talks to a local SPINE (Durchstich-Test).
 const SHOP_PREVIEW = process.env.SHOP_PREVIEW === '1';
+
+// SPINE sends the current price; the page works with the start price (current = start × 2^sold for capitalistic selling).
+const fromSpine = (w) => (w.capitalistic && w.preis != null ? { ...w, preis: w.preis / 2 ** (w.verkauft || []).length } : w);
+
+async function loadAvailable() {
+	if (!SPINE_URL) return;
+	const api = `${SPINE_URL}/api/public/shop/${KANAL}`;
+	try {
+		const res = await fetch(api, { signal: AbortSignal.timeout(15000) });
+		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		const data = await res.json();
+		const local = Object.fromEntries(available.werke.map((w) => [w.id, w]));
+		const werke = data.werke
+			.map((w) => fromSpine({ verkauft: [], reserviert: [], ...w, fig: w.fig || local[w.id]?.fig }))
+			.filter((w) => {
+				if (!w.fig) console.warn(`  SPINE work ${w.id} has no fig. number in content/available.json – skipped`);
+				return w.fig;
+			});
+		available = { versand: data.versand, rahmen: data.rahmen, werke, api };
+		console.log(`  shop: ${werke.length} works from SPINE`);
+	} catch (err) {
+		console.warn(`  shop: SPINE not reachable (${err.message}) – example data`);
+	}
+}
 
 function comingSoonPage() {
 	return `${head({ title: 'Available - Julius Niemeyer', description: 'Works and editions by Julius Niemeyer — coming soon.' })}
@@ -328,6 +356,7 @@ function availablePage(img) {
 		const fig = `<figure data-fig="${esc(w.fig)}"${im.light ? ' class="on-light"' : ''}><img src="${im.small}" data-full="${im.big}" width="${im.width}" height="${im.height}" alt="${esc(w.titel)}" loading="lazy" decoding="async"></figure>`;
 		const meta = `<p class="av-title">${esc(w.titel)} (${w.jahr})</p><p>${esc(w.technik)}<br>${esc(w.masse)}</p>`;
 		if (w.art === 'unikat') {
+			if (w.modus === 'kauf') console.warn(`  ${w.id}: unique work with modus "kauf" is shown as "on request" (not built yet)`);
 			return `		<article class="av-item av-unikat" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
 			<p class="av-price">unique work · price on request</p>
 			${w.gerahmt ? '<p class="av-frame-incl">framed · frame included</p>' : ''}
@@ -360,7 +389,7 @@ ${header('available')}
 		<div class="span-4">
 			<p>Works currently available. <em>Editions</em> can be bought directly within the EU — choose the number you want.
 			<em>Unique works</em> on request: you receive a PDF dossier for each work by email. Shipping outside the EU on request.</p>
-			<p class="av-note">Prices incl. VAT, plus shipping. In Munich: delivery or pickup by appointment. Prototype with example data — nothing is sold here.</p>
+			<p class="av-note">Prices incl. VAT, plus shipping. In Munich: delivery or pickup by appointment.${available.api ? '' : ' Prototype with example data — nothing is sold here.'}</p>
 		</div>
 	</section>
 
@@ -390,6 +419,30 @@ ${footer}
 `;
 }
 
+// Stripe sends buyers back here after paying (successUrl = https://juliusniemeyer.de/danke.html?o=<orderId>)
+function thanksPage() {
+	return `${head({ title: 'Thank you - Julius Niemeyer', description: 'Thank you for your order.', robots: 'noindex, nofollow' })}
+${header('available')}
+<main id="top">
+	<section class="intro cols legal-page">
+		<h1 class="span-8">Thank you</h1>
+		<div class="span-4">
+			<p>Your payment went through. You will receive an order confirmation by email.</p>
+			<p class="av-order" hidden>Order number: <span></span></p>
+			<p>Julius gets in touch about delivery or pickup. Questions: ${emailLink('write an email')}.</p>
+			<p><a href="available.html">Back to Available</a></p>
+		</div>
+	</section>
+</main>
+
+${footer}
+<script>(() => { const o = new URLSearchParams(location.search).get('o'); const p = document.querySelector('.av-order'); if (o && /^[A-Za-z0-9_-]{1,64}$/.test(o)) { p.querySelector('span').textContent = o; p.hidden = false; } })();</script>
+<script src="assets/main.js" defer></script>
+</body>
+</html>
+`;
+}
+
 /* ---------- build ---------- */
 
 (async () => {
@@ -399,10 +452,14 @@ ${footer}
 		if (fs.existsSync(f)) fs.cpSync(f, path.join(OUT, f), { recursive: true });
 	}
 	const img = await processImages();
+	await loadAvailable();
 	assignFigs();
 	fs.writeFileSync(path.join(OUT, 'index.html'), indexPage(img));
 	fs.writeFileSync(path.join(OUT, 'available.html'), SHOP_PREVIEW ? availablePage(img) : comingSoonPage());
-	if (SHOP_PREVIEW) console.log('  shop preview: available.html with example data');
+	if (SHOP_PREVIEW) {
+		fs.writeFileSync(path.join(OUT, 'danke.html'), thanksPage());
+		console.log(`  shop preview: available.html with ${available.api ? 'SPINE data' : 'example data'}`);
+	}
 	legal.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
 	console.log(`built ${img.size} images, ${2 + legal.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);

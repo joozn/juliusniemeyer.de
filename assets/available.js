@@ -1,5 +1,6 @@
-// "Available" page (example data, see SHOP.md): edition numbers, capitalistic selling, simulated checkout, request flow for unique works.
-// Later: list from SPINE (build) + live status from SPINE, checkout via Konto → Stripe, requests → SPINE/Zentrale.
+// "Available" page (see SHOP.md): edition numbers, capitalistic selling, checkout, request flow for unique works.
+// With data.api (list came from SPINE): live status, checkout and requests go to SPINE (contract: mainframe/docs/verkauf.md).
+// Without: example data, checkout and requests are only simulated.
 (() => {
 	'use strict';
 	const $ = (s, el = document) => el.querySelector(s);
@@ -12,6 +13,17 @@
 	// price is always computed from the sales so far (live: on the server, never taken from the browser)
 	const price = (w) => (w.capitalistic ? w.preis * 2 ** w.verkauft.length : w.preis);
 	const vatOf = (gross, rate) => gross - gross / (1 + rate / 100);
+	const api = data.api;
+	const loadedAt = Date.now();
+	const mailHint = 'Please try again in a moment — or write an email.';
+	async function post(path, body) {
+		const res = await fetch(`${api}/${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+		let json = {};
+		try {
+			json = await res.json();
+		} catch {}
+		return { status: res.status, ok: res.ok, json };
+	}
 
 	/* ---------- editions ---------- */
 
@@ -120,6 +132,29 @@
 		renderEdition(el);
 	});
 
+	/* ---------- live status from SPINE (sold, reserved, current price) ---------- */
+
+	async function refresh() {
+		if (!api) return;
+		try {
+			const res = await fetch(`${api}/status`, { cache: 'no-store' });
+			if (!res.ok) return;
+			const list = await res.json();
+			(Array.isArray(list) ? list : list.werke || []).forEach((st) => {
+				const w = works[st.id];
+				if (!w) return;
+				w.status = st.status;
+				w.verkauft = st.verkauft || [];
+				w.reserviert = st.reserviert || [];
+				if (st.preis != null) w.preis = w.capitalistic ? st.preis / 2 ** w.verkauft.length : st.preis;
+				if (selected[w.id] && (w.verkauft.includes(selected[w.id]) || w.reserviert.includes(selected[w.id]))) selected[w.id] = undefined;
+			});
+			$$('.av-edition').forEach(renderEdition);
+		} catch {}
+	}
+	refresh();
+	document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && refresh());
+
 	/* ---------- dialog ---------- */
 
 	const dlg = $('.av-dialog');
@@ -142,11 +177,31 @@
 	});
 	document.addEventListener('keydown', (e) => !dlg.hidden && e.key === 'Escape' && close());
 
-	/* ---------- checkout (simulated; live: Konto → Stripe Checkout) ---------- */
+	/* ---------- checkout: SPINE reserves the number, Konto opens Stripe Checkout (without api: simulated) ---------- */
 
-	function checkout(w, el) {
+	async function checkout(w, el) {
 		const n = selected[w.id];
 		if (!n) return;
+		if (api) {
+			const buy = $('.av-buy', el);
+			buy.disabled = true;
+			buy.textContent = 'Reserving …';
+			try {
+				// never send a price: SPINE computes it
+				const r = await post('checkout', { work: w.id, number: w.capitalistic ? undefined : n, frame: frameOf[w.id] || (w.rahmen || ['ohne'])[0], delivery: delivery(w).id });
+				if (r.ok && r.json.url) return void (location.href = r.json.url);
+				await refresh();
+				open(`
+					<p class="av-step">Checkout</p>
+					<p class="av-title">${r.status === 409 ? `No. ${n} was just reserved by someone else` : 'That did not work'}</p>
+					<p>${r.status === 409 ? 'Please choose another number. Reservations that are not paid become free again after 30 minutes.' : mailHint}</p>
+					<p class="av-actions"><button type="button" class="av-primary av-close">Close</button></p>`);
+			} catch {
+				open(`<p class="av-title">No connection</p><p>${mailHint}</p><p class="av-actions"><button type="button" class="av-primary av-close">Close</button></p>`);
+			}
+			renderEdition(el);
+			return;
+		}
 		const p = price(w);
 		const f = frame(w);
 		const ship = shipping(w);
@@ -213,11 +268,13 @@
 			<form class="av-form">
 				<label for="av-mail">Your email</label>
 				<input id="av-mail" type="email" required autocomplete="email" placeholder="name@example.com">
+				<input class="av-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 				<p class="av-actions"><button type="submit" class="av-primary">Continue</button> <button type="button" class="av-link av-close">Cancel</button></p>
 			</form>`);
 		$('.av-form', box).addEventListener('submit', (e) => {
 			e.preventDefault();
 			const mail = $('#av-mail', box).value.trim();
+			const hp = $('.av-hp', box).value;
 			const others = unique.filter((w) => !ids.includes(w.id));
 			open(`
 				<p class="av-step">${esc(subject)} · 2 / 2</p>
@@ -227,9 +284,29 @@
 					${others.map((w) => `<label class="av-check"><input type="checkbox" value="${w.id}"> ${esc(w.titel)} (${w.jahr})</label>`).join('')}
 					<p class="av-actions"><button type="submit" class="av-primary">Send request</button> <button type="button" class="av-link av-close">Cancel</button></p>
 				</form>`);
-			$('.av-more', box).addEventListener('submit', (e2) => {
+			$('.av-more', box).addEventListener('submit', async (e2) => {
 				e2.preventDefault();
 				const all = [...ids, ...$$('input[value]:checked', box).map((c) => c.value)];
+				if (api) {
+					const send = $('.av-primary', box);
+					send.disabled = true;
+					send.textContent = 'Sending …';
+					let r = null;
+					try {
+						r = await post('inquiry', { email: mail, works: all, subject, website: hp, t: loadedAt });
+					} catch {}
+					if (!r || !r.ok) {
+						send.disabled = false;
+						send.textContent = 'Send request';
+						return void $('.av-actions', box).insertAdjacentHTML('beforebegin', `<p class="av-error">${r && r.status === 429 ? 'Too many requests — please try again later.' : mailHint}</p>`);
+					}
+					return open(`
+					<p class="av-step">Request sent</p>
+					<p>Thank you. Dossiers for ${all.length} work${all.length > 1 ? 's' : ''} are being prepared and sent to <b>${esc(mail)}</b>:</p>
+					<ul>${all.map((id) => `<li>fig. ${works[id].fig} — ${esc(works[id].titel)}</li>`).join('')}</ul>
+					<p>Julius gets in touch personally.</p>
+					<p class="av-actions"><button type="button" class="av-primary av-close">Close</button></p>`);
+				}
 				open(`
 					<p class="av-step">Request sent · prototype</p>
 					<p>Thank you. Dossiers for ${all.length} work${all.length > 1 ? 's' : ''} are being prepared and sent to <b>${esc(mail)}</b>:</p>

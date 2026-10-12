@@ -161,3 +161,15 @@ html:not(.js) .av-ask { display: none; }
 .av-ship .av-check { margin-bottom: 0.15rem !important; }
 .av-world-line { display: block; margin-top: 0.3rem; }
 .av-auto { margin: 0; color: var(--text); }
+
+/* spam trap for bots, invisible to people */
+.av-hp {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+}
+.av-error {
+	color: #ff6b4a;
+}
