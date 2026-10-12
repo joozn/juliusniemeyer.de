@@ -7,6 +7,9 @@ Architektur-Grundlage: Abschnitte „Architektur“ in `C:\dev\mainframe\CLAUDE.
 Schnittstellen zwischen den Apps (wer speichert was, wer schickt wem was): **`C:\dev\mainframe\docserkauf.md`**.
 Nachtrag 2026-10-12 (Julius): Ein Unikat kann pro Werk trotzdem **direkt kaufbar** sein (`modus: kauf`, z. B. die Voids bei OSCAR).
 
+**Schnittstellen-Vertrag** (wer speichert was, Endpunkte, Ereignisse, Reihenfolge): `C:\dev\mainframe\docserkauf.md`.
+Dort zuerst ändern, dann in den Apps.
+
 ## Grundsatz
 
 Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihre Aufgabe:
