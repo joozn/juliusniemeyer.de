@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Feinschliff</title>
+<link rel="icon" id="favicon" href="favicon.ico">
+<style>
+	@font-face { font-family: "Geist"; src: url("assets/fonts/Geist.woff2") format("woff2"); font-weight: 100 900; }
+	@font-face { font-family: "Geist Mono"; src: url("assets/fonts/GeistMono.woff2") format("woff2"); font-weight: 100 900; }
+	:root {
+		--bg: #0d0d0d;
+		--panel: #151515;
+		--text: rgba(255, 255, 255, 0.9);
+		--dim: rgba(255, 255, 255, 0.5);
+		--line: rgba(255, 255, 255, 0.14);
+		--accent: #4150ff;
+		--sans: "Geist", "Helvetica Neue", Arial, sans-serif;
+		--mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+		color-scheme: dark;
+	}
+	* { box-sizing: border-box; }
+	html, body { height: 100%; margin: 0; }
+	body {
+		display: grid;
+		grid-template-columns: 400px 1fr;
+		background: var(--bg);
+		color: var(--text);
+		font: 450 15px/1.35 var(--sans);
+		letter-spacing: -0.01em;
+		-webkit-font-smoothing: antialiased;
+		overflow: hidden;
+	}
+	button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+	button:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+
+	/* ---------- panel ---------- */
+	.panel {
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+		background: var(--panel);
+		border-right: 1px solid var(--line);
+	}
+	.head { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); }
+	.head-row { display: flex; justify-content: space-between; align-items: baseline; }
+	.brand { font-weight: 650; letter-spacing: -0.02em; }
+	.count { font: 400 12px var(--mono); color: var(--dim); }
+	.count b { color: var(--text); font-weight: 400; }
+	.ticks { display: flex; gap: 2px; margin-top: 12px; }
+	.tick {
+		flex: 1;
+		height: 18px;
+		position: relative;
+	}
+	.tick::before {
+		content: "";
+		position: absolute;
+		left: 0; right: 0; bottom: 0;
+		height: 6px;
+		background: rgba(255, 255, 255, 0.12);
+		transition: height 0.15s, background 0.15s;
+	}
+	.tick.changed::before { background: var(--accent); }
+	.tick.seen:not(.changed)::before { background: rgba(255, 255, 255, 0.35); }
+	.tick.current::before { height: 18px; }
+	.tick:hover::before { height: 12px; }
+	.tick.done { flex: 1.6; }
+	.tick.done::before { background: transparent; border: 1px solid rgba(255, 255, 255, 0.4); }
+	.tick.done.current::before { background: var(--accent); border-color: var(--accent); }
+	.legend { display: flex; gap: 14px; margin-top: 8px; font: 400 11px var(--mono); color: var(--dim); }
+	.legend i { display: inline-block; width: 8px; height: 8px; margin-right: 5px; vertical-align: 0; }
+
+	.step { flex: 1; overflow-y: auto; padding: 22px 22px 10px; }
+	.group { font: 400 12px var(--mono); color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
+	h1 { margin: 6px 0 4px; font-size: 30px; font-weight: 620; line-height: 1.05; letter-spacing: -0.035em; }
+	.question { margin: 0 0 18px; color: var(--dim); }
+	.options { display: grid; gap: 6px; }
+	.opt {
+		display: grid;
+		grid-template-columns: 22px 1fr auto;
+		gap: 2px 10px;
+		align-items: baseline;
+		width: 100%;
+		padding: 11px 12px;
+		text-align: left;
+		border: 1px solid var(--line);
+		transition: border-color 0.12s, background 0.12s;
+	}
+	.opt:hover { border-color: rgba(255, 255, 255, 0.4); }
+	.opt[aria-checked="true"] { border-color: var(--accent); background: rgba(65, 80, 255, 0.12); }
+	.opt .key { grid-row: span 2; font: 400 12px var(--mono); color: var(--dim); }
+	.opt[aria-checked="true"] .key { color: var(--accent); }
+	.opt .label { font-weight: 560; }
+	.opt .tag { font: 400 10px var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; border: 1px solid var(--line); padding: 1px 5px; }
+	.opt .desc { grid-column: 2 / -1; color: var(--dim); font-size: 13px; }
+
+	.summary h1 { margin-bottom: 10px; }
+	.changes { margin: 14px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+	.changes li { border-bottom: 1px solid var(--line); }
+	.changes button { display: grid; grid-template-columns: 1fr auto; gap: 8px; width: 100%; padding: 8px 0; text-align: left; }
+	.changes button:hover .t { color: var(--accent); }
+	.changes .t { color: var(--dim); }
+	.changes .w { font-weight: 560; text-align: right; }
+	.changes li.same .w { color: var(--dim); font-weight: 400; }
+	.toggle-same { margin-top: 10px; font: 400 12px var(--mono); color: var(--dim); text-decoration: underline; }
+	.go {
+		display: block;
+		width: 100%;
+		margin: 22px 0 8px;
+		padding: 16px;
+		background: var(--accent);
+		color: #fff;
+		font-size: 18px;
+		font-weight: 620;
+		letter-spacing: -0.02em;
+	}
+	.go:hover { filter: brightness(1.15); }
+	.go[disabled] { opacity: 0.6; cursor: default; }
+	.status { min-height: 1.4em; font: 400 12px/1.5 var(--mono); color: var(--dim); }
+	.status.ok { color: #7dff9b; }
+
+	.foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 22px 18px; border-top: 1px solid var(--line); }
+	.nav-btn { padding: 10px 16px; border: 1px solid var(--line); }
+	.nav-btn:hover { border-color: rgba(255, 255, 255, 0.45); }
+	.nav-btn.primary { background: var(--text); color: #000; border-color: var(--text); font-weight: 560; }
+	.nav-btn[disabled] { opacity: 0.3; cursor: default; }
+	.mini { font: 400 11px var(--mono); color: var(--dim); text-align: center; }
+	.mini button { text-decoration: underline; }
+
+	/* ---------- preview ---------- */
+	.stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+	.toolbar {
+		display: flex;
+		gap: 18px;
+		align-items: center;
+		padding: 10px 16px;
+		border-bottom: 1px solid var(--line);
+		font: 400 12px var(--mono);
+		color: var(--dim);
+	}
+	.seg { display: flex; border: 1px solid var(--line); }
+	.seg button { padding: 5px 10px; }
+	.seg button[aria-pressed="true"] { background: var(--text); color: #000; }
+	.hold { padding: 5px 10px; border: 1px solid var(--line); user-select: none; }
+	.hold:active, .hold.on { background: #fff; color: #000; }
+	.toolbar .spacer { flex: 1; }
+	.frame-wrap { flex: 1; display: flex; justify-content: center; min-height: 0; background: #070707; }
+	iframe { width: 100%; height: 100%; border: 0; background: #111; transition: width 0.3s ease; }
+	.frame-wrap.handy { padding: 18px 0; }
+	.frame-wrap.handy iframe { width: 390px; border: 1px solid var(--line); }
+	.orig-badge {
+		position: fixed; right: 18px; bottom: 18px;
+		padding: 6px 10px; background: #fff; color: #000;
+		font: 400 12px var(--mono); display: none;
+	}
+	body.show-orig .orig-badge { display: block; }
+
+	@media (max-width: 900px) {
+		body { grid-template-columns: 1fr; grid-template-rows: 55vh 45vh; }
+		.panel { order: 2; border-right: 0; border-top: 1px solid var(--line); }
+		.toolbar .hint { display: none; }
+	}
+</style>
+</head>
+<body>
+<aside class="panel">
+	<div class="head">
+		<div class="head-row"><span class="brand">Feinschliff · juliusniemeyer.de</span><span class="count" id="count"></span></div>
+		<div class="ticks" id="ticks" role="tablist" aria-label="Entscheidungen"></div>
+		<div class="legend"><span><i style="background:var(--accent)"></i>geändert</span><span><i style="background:rgba(255,255,255,.35)"></i>angesehen</span><span><i style="background:rgba(255,255,255,.12)"></i>offen</span></div>
+	</div>
+	<div class="step" id="step"></div>
+	<div class="foot">
+		<button class="nav-btn" id="prev">← Zurück</button>
+		<div class="mini"><button id="reset-one">auf heute</button></div>
+		<button class="nav-btn primary" id="next">Weiter →</button>
+	</div>
+</aside>
+<main class="stage">
+	<div class="toolbar">
+		<div class="seg" role="group" aria-label="Gerät">
+			<button id="desk" aria-pressed="true">Desktop</button>
+			<button id="handy" aria-pressed="false">Handy</button>
+		</div>
+		<button class="hold" id="hold" title="Gedrückt halten (oder Taste O)">Heute zeigen</button>
+		<span class="spacer"></span>
+		<span class="hint">← → Entscheidung · ↑ ↓ oder 1–6 Variante · O halten = heute</span>
+	</div>
+	<div class="frame-wrap" id="wrap"><iframe id="frame" src="konfigurator-vorschau.html" title="Vorschau"></iframe></div>
+	<div class="orig-badge">So ist es heute</div>
+</main>
+<script src="konfigurator/optionen.js"></script>
+<script>
+	const K = window.KONFIG;
+	const N = K.length;
+	const KEY = 'feinschliff-wahl';
+	const $ = (id) => document.getElementById(id);
+	const frame = $('frame');
+
+	let state = {};
+	let seen = new Set();
+	try {
+		const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+		state = saved.state || {};
+		seen = new Set(saved.seen || []);
+	} catch {}
+	K.forEach((d) => {
+		if (!d.optionen.some((o) => o.id === state[d.id])) state[d.id] = d.optionen.find((o) => o.orig).id;
+	});
+	let pos = 0;
+	let showAll = false;
+	let showOrig = false;
+
+	const opt = (d, id = state[d.id]) => d.optionen.find((o) => o.id === id);
+	const isOrig = (d) => opt(d).orig;
+	const save = () => {
+		try { localStorage.setItem(KEY, JSON.stringify({ state, seen: [...seen] })); } catch {}
+	};
+
+	/* ---------- preview ---------- */
+
+	function compose(original) {
+		let css = '';
+		const flags = {};
+		K.forEach((d) => {
+			const o = original ? d.optionen.find((x) => x.orig) : opt(d);
+			css += (o.css || '') + '\n';
+			Object.assign(flags, o.flags || {});
+			flags[d.id] = o.id;
+		});
+		return { css, flags };
+	}
+	let ready = false;
+	let pendingFokus = null;
+	function apply(fokus) {
+		if (fokus !== undefined) pendingFokus = fokus;
+		if (!ready) return;
+		const w = frame.contentWindow;
+		if (!w || !w.cfgApply) return;
+		w.cfgApply({ ...compose(showOrig), fokus: pendingFokus });
+		pendingFokus = null;
+		setFavicon();
+	}
+	frame.addEventListener('load', () => {
+		const wait = () => (frame.contentWindow.cfgReady ? ((ready = true), apply(pos < N ? K[pos].fokus : 'top')) : setTimeout(wait, 50));
+		wait();
+	});
+
+	function setFavicon() {
+		const mode = state.favicon;
+		const link = $('favicon');
+		const m = (opt(K.find((d) => d.id === 'akzent')).css || '').match(/--link:(#[0-9a-f]{3,6})/i);
+		const color = m ? m[1] : '#0000ff';
+		const svg = (inner) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">${inner}</svg>`);
+		if (mode === 'punkt') link.href = svg(`<circle cx="16" cy="16" r="12" fill="${color}"/>`);
+		else if (mode === 'sn') link.href = svg(`<rect width="32" height="32" fill="#111"/><text x="16" y="22" font-family="monospace" font-size="17" text-anchor="middle" fill="${color}">sn</text>`);
+		else link.href = 'favicon.ico';
+	}
+
+	/* ---------- panel ---------- */
+
+	function renderTicks() {
+		$('ticks').innerHTML =
+			K.map((d, i) => `<button class="tick${isOrig(d) ? '' : ' changed'}${seen.has(d.id) ? ' seen' : ''}${i === pos ? ' current' : ''}" title="${d.titel}: ${opt(d).label}" data-i="${i}"></button>`).join('') +
+			`<button class="tick done${pos === N ? ' current' : ''}" title="Fertig" data-i="${N}"></button>`;
+		const changed = K.filter((d) => !isOrig(d)).length;
+		$('count').innerHTML = pos < N ? `<b>${String(pos + 1).padStart(2, '0')}</b> / ${N} · ${changed} geändert` : `${changed} geändert`;
+	}
+
+	const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+
+	function renderStep() {
+		const el = $('step');
+		if (pos === N) return renderSummary(el);
+		const d = K[pos];
+		seen.add(d.id);
+		el.className = 'step';
+		el.innerHTML = `
+			<div class="group">${esc(d.gruppe)}</div>
+			<h1>${esc(d.titel)}</h1>
+			<p class="question">${esc(d.frage)}</p>
+			<div class="options" role="radiogroup" aria-label="${esc(d.titel)}">
+				${d.optionen.map((o, i) => `
+				<button class="opt" role="radio" aria-checked="${o.id === state[d.id]}" data-id="${o.id}">
+					<span class="key">${i + 1}</span><span class="label">${esc(o.label)}</span>${o.orig ? '<span class="tag">heute</span>' : '<span></span>'}
+					<span class="desc">${esc(o.desc)}</span>
+				</button>`).join('')}
+			</div>`;
+		el.querySelectorAll('.opt').forEach((b) => b.addEventListener('click', () => choose(b.dataset.id)));
+		$('prev').disabled = pos === 0;
+		$('next').textContent = pos === N - 1 ? 'Zum Abschluss →' : 'Weiter →';
+		$('next').disabled = false;
+		$('reset-one').parentElement.style.visibility = isOrig(d) ? 'hidden' : 'visible';
+	}
+
+	function renderSummary(el) {
+		const changed = K.filter((d) => !isOrig(d));
+		el.className = 'step summary';
+		const list = (showAll ? K : changed)
+			.map((d) => `<li class="${isOrig(d) ? 'same' : ''}"><button data-i="${K.indexOf(d)}"><span class="t">${esc(d.titel)}</span><span class="w">${esc(opt(d).label)}</span></button></li>`)
+			.join('');
+		el.innerHTML = `
+			<div class="group">Abschluss</div>
+			<h1>${changed.length ? `${changed.length} Änderungen` : 'Noch nichts geändert'}</h1>
+			<p class="question">${changed.length ? 'Das ist deine Auswahl. Klick auf eine Zeile, um sie noch einmal zu ändern. Rechts siehst du alles zusammen.' : 'Geh die Entscheidungen durch und wähle, was dir gefällt.'}</p>
+			<ul class="changes">${list}</ul>
+			<button class="toggle-same">${showAll ? 'nur Änderungen zeigen' : `alle ${N} Entscheidungen zeigen`}</button>
+			<button class="go" ${changed.length ? '' : 'disabled'}>So wird's gemacht</button>
+			<div class="status" id="status"></div>`;
+		el.querySelectorAll('.changes button').forEach((b) => b.addEventListener('click', () => go(+b.dataset.i)));
+		el.querySelector('.toggle-same').addEventListener('click', () => ((showAll = !showAll), renderStep()));
+		el.querySelector('.go').addEventListener('click', submit);
+		$('prev').disabled = false;
+		$('next').disabled = true;
+		$('next').textContent = 'Weiter →';
+		$('reset-one').parentElement.style.visibility = 'hidden';
+	}
+
+	function render() {
+		renderStep();
+		renderTicks();
+		save();
+	}
+
+	function choose(id) {
+		state[K[pos].id] = id;
+		render();
+		apply();
+	}
+	function go(i) {
+		pos = Math.max(0, Math.min(N, i));
+		render();
+		apply(pos < N ? K[pos].fokus : 'top');
+	}
+
+	async function submit() {
+		const status = $('status');
+		const data = {
+			datum: new Date().toISOString().slice(0, 16).replace('T', ' '),
+			entscheidungen: K.map((d) => ({ id: d.id, gruppe: d.gruppe, titel: d.titel, option: state[d.id], wahl: opt(d).label, orig: !!opt(d).orig })),
+		};
+		try {
+			const r = await fetch('/entscheidung', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
+			if (!r.ok) throw new Error(r.status);
+			status.className = 'status ok';
+			status.textContent = 'Gespeichert. Sag Claude im Chat „fertig“ – dann wird es umgesetzt.';
+		} catch {
+			try { await navigator.clipboard.writeText(JSON.stringify(data, null, 2)); } catch {}
+			status.className = 'status';
+			status.textContent = 'Speichern ging hier nicht (Seite über Port 4174 öffnen). Die Auswahl ist in der Zwischenablage – einfach in den Chat einfügen.';
+		}
+	}
+
+	$('ticks').addEventListener('click', (e) => {
+		const t = e.target.closest('.tick');
+		if (t) go(+t.dataset.i);
+	});
+	$('prev').addEventListener('click', () => go(pos - 1));
+	$('next').addEventListener('click', () => go(pos + 1));
+	$('reset-one').addEventListener('click', () => choose(K[pos].optionen.find((o) => o.orig).id));
+
+	function setDevice(handy) {
+		$('wrap').classList.toggle('handy', handy);
+		$('desk').setAttribute('aria-pressed', !handy);
+		$('handy').setAttribute('aria-pressed', handy);
+	}
+	$('desk').addEventListener('click', () => setDevice(false));
+	$('handy').addEventListener('click', () => setDevice(true));
+
+	function holdOrig(on) {
+		if (showOrig === on) return;
+		showOrig = on;
+		document.body.classList.toggle('show-orig', on);
+		$('hold').classList.toggle('on', on);
+		apply();
+	}
+	$('hold').addEventListener('pointerdown', () => holdOrig(true));
+	addEventListener('pointerup', () => holdOrig(false));
+
+	addEventListener('keydown', (e) => {
+		if (e.altKey || e.ctrlKey || e.metaKey) return;
+		if (e.key === 'ArrowRight') go(pos + 1);
+		else if (e.key === 'ArrowLeft') go(pos - 1);
+		else if (pos < N && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+			e.preventDefault();
+			const os = K[pos].optionen;
+			const i = os.findIndex((o) => o.id === state[K[pos].id]);
+			choose(os[(i + (e.key === 'ArrowDown' ? 1 : -1) + os.length) % os.length].id);
+		} else if (pos < N && /^[1-9]$/.test(e.key) && K[pos].optionen[+e.key - 1]) choose(K[pos].optionen[+e.key - 1].id);
+		else if (e.key === 'o' || e.key === 'O') holdOrig(true);
+	});
+	addEventListener('keyup', (e) => {
+		if (e.key === 'o' || e.key === 'O') holdOrig(false);
+	});
+
+	render();
+</script>
+</body>
+</html>

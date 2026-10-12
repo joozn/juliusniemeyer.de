@@ -56,6 +56,35 @@ html {
 	box-sizing: border-box;
 }
 
+/* ---------- scrollbar: hairline thumb, blue on hover ---------- */
+
+::-webkit-scrollbar {
+	width: 7px;
+	height: 7px;
+}
+::-webkit-scrollbar-track {
+	background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.22);
+	border-left: 3px solid var(--bg);
+	background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+	background-color: var(--link);
+	border-left-width: 0;
+}
+::-webkit-scrollbar-corner {
+	background: var(--bg);
+}
+@supports not selector(::-webkit-scrollbar) {
+	html {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(255, 255, 255, 0.22) var(--bg);
+	}
+}
+
 body {
 	margin: 0;
 	background: var(--bg);
