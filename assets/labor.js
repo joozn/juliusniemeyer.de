@@ -467,14 +467,14 @@
 		});
 	}
 	// switch in the footer (desktop and mobile)
-	[$('.bar--bottom .desktop-only .span-8'), $('.bar--bottom .mobile-only > div')].forEach((cell) => {
+	[$('.bar--bottom .desktop-only .span-6'), $('.bar--bottom .mobile-only > div')].forEach((cell) => {
 		if (!cell) return;
 		const b = document.createElement('button');
 		b.type = 'button';
 		b.className = 'ton';
 		b.addEventListener('click', () => setSound(!soundOn));
 		const prev = cell.querySelector('a:last-of-type');
-		if (cell.classList.contains('span-8') && prev) prev.textContent += ','; // commas sit inside the links
+		if (cell.classList.contains('span-6') && prev) prev.textContent += ','; // commas sit inside the links
 		cell.append(' ', b);
 		tonButtons.push(b);
 	});

@@ -77,7 +77,8 @@ function assignFigs() {
 }
 
 const [mailUser, mailDomain] = site.email.split('@');
-const emailLink = (label) => `<a href="#" data-u="${esc(mailUser)}" data-d="${esc(mailDomain)}">${label}</a>`;
+const emailLink = (label) =>
+	`<a href="#" data-u="${esc(mailUser)}" data-d="${esc(mailDomain)}">${label}</a><noscript>${esc(mailUser)} (at) ${esc(mailDomain)}${label.endsWith(',') ? ',' : ''}</noscript>`;
 
 /* ---------- images ---------- */
 
@@ -151,9 +152,9 @@ const header = (page) => {
 	const av = `<a href="available.html" class="nav-available${page === 'available' ? ' is-here' : ''}">Available</a>`;
 	return `<header class="bar bar--top">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-6"><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
+		<div class="span-4"><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
 		<div class="span-2">${av}</div>
-		<nav class="span-2" aria-label="Works">${worksNav}</nav>
+		<nav class="span-4" aria-label="Works">${worksNav}</nav>
 		<div class="span-2 right">${stand}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
@@ -167,8 +168,8 @@ const header = (page) => {
 
 const footer = `<footer class="bar bar--bottom">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-8">${emailLink('Email,')} <a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de,</a> <a href="impressum.html">Impressum,</a> <a href="datenschutz.html">Datenschutz</a></div>
-		<div class="span-2">${esc(site.footer_quote)}</div>
+		<div class="span-6">${emailLink('Email,')} <a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de,</a> <a href="impressum.html">Impressum,</a> <a href="datenschutz.html">Datenschutz</a></div>
+		<div class="span-4">${esc(site.footer_quote)}</div>
 		<div class="span-2 right">${esc(site.footer_credit)}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
@@ -289,6 +290,31 @@ ${footer}
 `;
 }
 
+// Until the shop runs with real data from SPINE the page says "coming soon".
+// Work on the shop locally: SHOP_PREVIEW=1 npm run build (never set in GitHub Actions).
+const SHOP_PREVIEW = process.env.SHOP_PREVIEW === '1';
+
+function comingSoonPage() {
+	return `${head({ title: 'Available - Julius Niemeyer', description: 'Works and editions by Julius Niemeyer — coming soon.' })}
+${header('available')}
+<main id="top">
+	<section class="intro cols legal-page">
+		<h1 class="span-8">Available</h1>
+		<div class="span-4">
+			<p>Coming soon.</p>
+			<p>Editions and works that are currently available will be listed here. Until then: ${emailLink('write an email')}.</p>
+		</div>
+	</section>
+</main>
+
+${footer}
+<script src="assets/main.js" defer></script>
+<script src="assets/labor.js" defer></script>
+</body>
+</html>
+`;
+}
+
 function availablePage(img) {
 	// images by fig. number from the work galleries
 	const byFig = {};
@@ -375,7 +401,8 @@ ${footer}
 	const img = await processImages();
 	assignFigs();
 	fs.writeFileSync(path.join(OUT, 'index.html'), indexPage(img));
-	fs.writeFileSync(path.join(OUT, 'available.html'), availablePage(img));
+	fs.writeFileSync(path.join(OUT, 'available.html'), SHOP_PREVIEW ? availablePage(img) : comingSoonPage());
+	if (SHOP_PREVIEW) console.log('  shop preview: available.html with example data');
 	legal.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
 	console.log(`built ${img.size} images, ${2 + legal.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);

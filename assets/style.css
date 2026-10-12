@@ -127,6 +127,7 @@ a:not(.home):hover {
 a.home {
 	color: inherit;
 }
+html:not(.js) a[data-u] { display: none; } /* see the <noscript> address next to it */
 a:active,
 .gallery img:active {
 	opacity: 0.7;
