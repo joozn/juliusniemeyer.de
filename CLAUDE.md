@@ -16,7 +16,7 @@ Website von Julius (Künstler). Kommunikation auf Deutsch. Technik und Betrieb s
 - Caddy: Block `juliusniemeyer.de` + `www` (Weiterleitung) aus `deploy/Caddyfile.live.snippet` angehängt,
   Sicherung `/opt/caddy/Caddyfile.bak-20261012-163953`. Zertifikat Let's Encrypt, verlängert Caddy selbst.
 - Noch offen: Testbetrieb-Block `website.studioniemeyer.de` entfernen, wenn Julius zufrieden ist; Kachel-URL in
-  `C:\dev\mainframe\serverpps.json` auf juliusniemeyer.de; danach kann Julius Cargo kündigen.
+  `C:\dev\mainframe\server\apps.json` auf juliusniemeyer.de; danach kann Julius Cargo kündigen.
 - CMS-Login (GitHub-Zugangsschlüssel) ist noch nicht eingerichtet.
 
 ## Design: Feinschliff übernommen (12.10.2026)
