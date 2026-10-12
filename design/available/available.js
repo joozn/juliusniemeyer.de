@@ -19,6 +19,22 @@
 	const frameOf = {}; // chosen frame option per edition
 	const frame = (w) => data.rahmen[frameOf[w.id] || (w.rahmen || ['ohne'])[0]];
 	const shipping = (w) => data.versand[frame(w).versand || w.versand];
+	// delivery: shipping within the EU, delivery in Munich (price per shipping scheme), or pickup by appointment
+	const deliveryOf = {};
+	const DELIVERY = {
+		eu: { label: 'shipping EU', cost: (s) => s.eu },
+		muenchen: { label: 'delivery in Munich', cost: (s) => s.muenchen },
+		abholung: { label: 'pickup in Munich, by appointment', cost: () => 0 },
+	};
+	const delivery = (w) => {
+		const id = deliveryOf[w.id] && DELIVERY[deliveryOf[w.id]].cost(shipping(w)) != null ? deliveryOf[w.id] : 'eu';
+		return { id, ...DELIVERY[id], price: DELIVERY[id].cost(shipping(w)) };
+	};
+	// capitalistic selling: no choice, the next free number in order
+	const nextFree = (w) => {
+		for (let n = 1; n <= w.auflage; n++) if (!w.verkauft.includes(n) && !w.reserviert.includes(n)) return n;
+		return undefined;
+	};
 	function renderEdition(el) {
 		const w = works[el.dataset.id];
 		const sold = new Set(w.verkauft);
@@ -30,6 +46,8 @@
 		$('.av-price', el).innerHTML = soldOut
 			? `${ap} · sold out` + (w.capitalistic ? ` · last copy was sold for: <b>${euro(w.preis * 2 ** (sold.size - 1))}</b>` : '')
 			: `${ap} · <b>${free}</b> available · <b>${euro(p)}</b>` + (w.capitalistic && free > 1 ? ` <span class="av-next">(next copy ${euro(p * 2)})</span>` : '');
+		if (w.capitalistic) selected[w.id] = nextFree(w);
+		$('.av-label', el).textContent = w.capitalistic ? 'your number' : 'choose your number';
 		$('.av-label', el).hidden = soldOut;
 		$('.av-numbers', el).hidden = soldOut;
 		$('.av-frames', el).hidden = soldOut || (w.rahmen || []).length < 2;
@@ -49,10 +67,24 @@
 				.join('');
 
 		const ship = shipping(w);
-		$('.av-ship', el).innerHTML = `shipping EU ${euro(ship.eu)} · outside the EU <button type="button" class="av-link av-world">on request</button>`;
+		const dv = delivery(w);
+		$('.av-ship', el).innerHTML =
+			'<span class="av-label">delivery</span>' +
+			Object.entries(DELIVERY)
+				.map(([id, d]) => {
+					const c = d.cost(ship);
+					if (c == null) return '';
+					return `<label class="av-check"><input type="radio" name="delivery-${w.id}" value="${id}"${id === dv.id ? ' checked' : ''}> ${d.label}${id === 'abholung' ? ' — free' : ` ${euro(c)}`}</label>`;
+				})
+				.join('') +
+			`<span class="av-world-line">outside the EU <button type="button" class="av-link av-world">on request</button></span>`;
 		const box = $('.av-numbers', el);
 		box.innerHTML = '';
-		for (let n = 1; n <= w.auflage; n++) {
+		if (w.capitalistic) {
+			const n = selected[w.id];
+			box.innerHTML = n ? `<p class="av-auto">no. ${n}/${w.auflage} — assigned automatically, always the next number in order</p>` : '';
+		}
+		for (let n = 1; n <= w.auflage && !w.capitalistic; n++) {
 			const b = document.createElement('button');
 			b.type = 'button';
 			b.textContent = n;
@@ -70,8 +102,9 @@
 	}
 	$$('.av-edition').forEach((el) => {
 		el.addEventListener('change', (e) => {
-			if (!e.target.matches('.av-frames input')) return;
-			frameOf[el.dataset.id] = e.target.value;
+			if (e.target.matches('.av-frames input')) frameOf[el.dataset.id] = e.target.value;
+			else if (e.target.matches('.av-ship input')) deliveryOf[el.dataset.id] = e.target.value;
+			else return;
 			renderEdition(el);
 		});
 		el.addEventListener('click', (e) => {
@@ -117,6 +150,7 @@
 		const p = price(w);
 		const f = frame(w);
 		const ship = shipping(w);
+		const dv = delivery(w);
 		const cents = (x) => Math.round(x * 100) / 100;
 		w.reserviert.push(n); // live: SPINE reserves the number for 30 min
 		renderEdition(el);
@@ -132,10 +166,12 @@
 				<tr class="dim"><td>incl. ${f.ust} % VAT</td><td>${euro(cents(vatOf(f.preis, f.ust)))}</td></tr>`
 						: `<tr><td>unframed</td><td>—</td></tr>`
 				}
-				<tr><td>shipping EU (${esc(ship.label)})</td><td>${euro(ship.eu)}</td></tr>
-				<tr class="total"><td>total</td><td>${euro(p + f.preis + ship.eu)}</td></tr>
+				<tr><td>${esc(dv.label)}${dv.id === 'abholung' ? '' : ` (${esc(ship.label)})`}</td><td>${dv.price ? euro(dv.price) : 'free'}</td></tr>
+				<tr class="total"><td>total</td><td>${euro(p + f.preis + dv.price)}</td></tr>
 			</table>
-			<p>No. ${n} is reserved for you for 30 minutes. Next you would enter your address and pay on Stripe's checkout page (EU addresses).</p>
+			<p>No. ${n} is reserved for you for 30 minutes. Next you would ${
+				dv.id === 'abholung' ? 'pay' : dv.id === 'muenchen' ? 'enter your Munich address and pay' : 'enter your address and pay'
+			} on Stripe's checkout page${dv.id === 'eu' ? ' (EU addresses)' : ''}.${dv.id === 'abholung' ? ' Julius then arranges a pickup date with you by email.' : ''}</p>
 			<p class="av-actions"><button type="button" class="av-primary av-pay">Simulate payment</button> <button type="button" class="av-link av-cancel">Cancel</button></p>`);
 		const release = () => {
 			w.reserviert = w.reserviert.filter((x) => x !== n);

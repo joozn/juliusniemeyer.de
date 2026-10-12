@@ -31,16 +31,27 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
     live angezeigt, nie aus dem Browser übernommen.
   - **Artist Proofs:** Jede Edition zeigt „edition of N + 1 AP“; die Zahl der APs ist in SPINE pro Edition
     einstellbar (z. B. + 2 AP). APs werden nicht über den Shop verkauft.
+  - **Capitalistic selling: keine Nummernwahl** – man bekommt automatisch die nächste freie Nummer (aufsteigend).
   - **Capitalistic selling ausverkauft:** kein „next copy“ mehr, stattdessen nur „last copy was sold for: <Preis>“.
 - **Rahmen:**
   - Unikate sind fertig gerahmt, der Rahmen ist im Preis enthalten („framed · frame included“).
   - Editionen (v. a. Poster/Drucke) normalerweise ungerahmt; pro Edition wählbare Rahmenoptionen mit Aufpreis
     (z. B. Eiche mit Museumsglas). Rahmenpreis kommt oben drauf und verdoppelt sich nicht mit; gerahmt gilt ein eigenes
     Versand-Schema (Kiste). Rahmen-Optionen zentral in SPINE pflegen und je Edition zuordnen.
-  - Offen: Baut Julius die Rahmen selbst oder ein Rahmenbauer? Steuersatz für den Rahmen (im Prototyp 19 %
-    getrennt ausgewiesen) mit Steuerberatung klären.
+  - Rahmen für Editionen: zugekauft oder selbst gebaut (kein Rahmenbauer).
+- **Lieferung München** als Alternative zum Versand: 15 € kleinere Arbeiten (bis ca. 60 cm), 30 € bis 1 m Kantenlänge,
+  50 € darüber (Sprinter muss geliehen werden). **Abholung** in München nach Voranmeldung, kostenlos; Termin per Mail.
+  Preis je Versand-Schema hinterlegt (Feld `muenchen`).
 - **Versand:** EU-weit direkt kaufbar, weltweit nur auf Anfrage. Versandkosten pro Werk; dazu wiederverwendbare
   Versand-Schemata (z. B. eins für alle Exemplare einer Edition).
+- **Umsatzsteuer – Stand der Überlegung (vor Livegang mit Steuerberatung klären):**
+  - 7 % gilt nur für Kunstgegenstände im Sinne der Anlage 2 Nr. 53 UStG (Zolltarif Kap. 97): vom Künstler mit der Hand
+    geschaffene Gemälde/Zeichnungen, Original-Druckgrafik (vom Künstler selbst abgezogen, limitiert, z. B. Siebdruck),
+    Originalskulpturen. Offset-Poster und Digitaldrucke sind in der Regel keine Originale → 19 %.
+  - Rahmen: Nach den Anmerkungen zu Kap. 97 werden Rahmen wie das Bild behandelt, wenn sie nach Art und Wert zum Werk
+    passen. Zusammen mit einem 7-%-Werk verkauft, kann der Rahmen also mit 7 % laufen. Ihn „als Teil des Kunstwerks“ zu
+    deklarieren hilft nur, wenn das Werk selbst ein Kunstgegenstand ist – beim Offset-Poster bleibt es bei 19 %.
+  - Folge für SPINE: Steuersatz pro Werk/Edition speichern; Rahmen übernimmt den Satz des Werks (Prototyp zeigt noch 19 %).
 - **Umsatzsteuer:** Julius ist kein Kleinunternehmer. Kunst mit 7 %; Steuersatz trotzdem pro Werk speichern
   (Drucke/Poster ohne Originaleigenschaft können 19 % haben – mit Steuerberatung klären). Später: automatische Abführung.
 - **Nach dem Verkauf:** Handlungsnachricht im Mainframe – klares Signal „hier ist etwas zu tun“, Klick öffnet den

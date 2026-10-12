@@ -154,3 +154,8 @@
 .av-frame-incl { color: rgba(var(--ink), 0.6); }
 
 .av-info [hidden] { display: none !important; }
+.av-ship { margin: 0 0 0.8rem; }
+.av-ship .av-label { display: block; margin-bottom: 0.3rem; }
+.av-ship .av-check { margin-bottom: 0.15rem !important; }
+.av-world-line { display: block; margin-top: 0.3rem; }
+.av-auto { margin: 0; color: var(--text); }

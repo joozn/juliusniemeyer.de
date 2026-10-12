@@ -48,7 +48,7 @@ const main = `<main id="top" class="available">
 		<div class="span-4">
 			<p>Works currently available. <em>Editions</em> can be bought directly within the EU — choose the number you want.
 			<em>Unique works</em> on request: you receive a PDF dossier for each work by email. Shipping outside the EU on request.</p>
-			<p class="av-note">Prices incl. 7 % VAT, plus shipping. Prototype with example data — nothing is sold here.</p>
+			<p class="av-note">Prices incl. VAT, plus shipping. In Munich: delivery or pickup by appointment. Prototype with example data — nothing is sold here.</p>
 		</div>
 	</section>
 
