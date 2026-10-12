@@ -4,6 +4,9 @@ Mit Julius entschieden am 12.10.2026. Gilt für juliusniemeyer.de und nach demse
 Architektur-Grundlage: Abschnitte „Architektur“ in `C:\dev\mainframe\CLAUDE.md`, `C:\dev\02_apps\konto\CLAUDE.md`,
 `C:\dev\02_apps\crm\CLAUDE.md`. Stripe läuft im Testmodus (`sk_test_…`), bis Julius live schaltet.
 
+Schnittstellen zwischen den Apps (wer speichert was, wer schickt wem was): **`C:\dev\mainframe\docserkauf.md`**.
+Nachtrag 2026-10-12 (Julius): Ein Unikat kann pro Werk trotzdem **direkt kaufbar** sein (`modus: kauf`, z. B. die Voids bei OSCAR).
+
 ## Grundsatz
 
 Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihre Aufgabe:

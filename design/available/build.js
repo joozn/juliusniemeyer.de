@@ -39,6 +39,8 @@ function item(w) {
 }
 
 const editions = data.werke.filter((w) => w.art === 'edition');
+// works on offer: unique works + editions that are not sold out
+const count = data.werke.filter((w) => w.art === 'unikat' || w.verkauft.length < w.auflage).length;
 const unikate = data.werke.filter((w) => w.art === 'unikat');
 
 const main = `<main id="top" class="available">
@@ -75,7 +77,11 @@ let html = index
 	.replace('<title>Studioniemeyer - Julius Niemeyer</title>', '<title>Available - Julius Niemeyer</title>')
 	.replace('</head>', '<link rel="stylesheet" href="available/available.css">\n<meta name="robots" content="noindex">\n</head>')
 	.replace('<script src="assets/labor.js" defer></script>', '<script src="assets/labor.js" defer></script>\n<script src="available/available.js" defer></script>')
-	.replaceAll('<a href="./#cv">CV</a>', '<a href="./#cv">CV,</a> <a href="available.html" class="is-here">Available</a>');
+	// "Available" set apart from the works: own column in the top bar, with the number of works on offer
+	.replace('<div class="span-8"><a href="./#top" class="home">studioniemeyer</a>', `<div class="span-6"><a href="./#top" class="home">studioniemeyer</a>`)
+	.replace(/(<div class="span-6"><a href="\.\/#top" class="home">studioniemeyer<\/a>.*?<\/div>)/, `$1
+		<div class="span-2"><a href="available.html" class="nav-available is-here">Available (${count})</a></div>`)
+	.replace('<div><a href="./#top" class="home">studioniemeyer</a>', `<div><a href="./#top" class="home">studioniemeyer</a> <a href="available.html" class="nav-available is-here">Available (${count})</a>`);
 if (!html.includes('available/available.js')) throw new Error('labor.js script tag not found');
 
 fs.writeFileSync(path.join(OUT, 'available.html'), html);
