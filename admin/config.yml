@@ -49,6 +49,11 @@ collections:
             hint: "Reihenfolge per Drag & Drop ändern. Die Bildreihen werden automatisch angeordnet."
             fields:
               - { label: Bild, name: image, widget: image }
+              - label: Bildnummer (fig.)
+                name: fig
+                widget: string
+                required: false
+                hint: "PROJEKT-JJ.NN, z. B. SKI-26.03 = skia, 2026, Bild 3. Leer lassen = wird automatisch vergeben. Einmal vergeben nicht mehr ändern."
               - label: Bildunterschrift
                 name: caption
                 widget: markdown
@@ -111,7 +116,12 @@ collections:
         label: Allgemein
         file: content/site.json
         fields:
-          - { label: Datum oben rechts, name: date, widget: string, hint: "z. B. 24.08.26 – Stand der Seite" }
+          - label: Aktuell
+            name: aktuell
+            widget: string
+            required: false
+            hint: "Erscheint oben neben dem Namen, z. B. Ausstellung ankündigen. Links als [Text](https://…). Leer = keine Zeile. Das Datum oben rechts setzt sich automatisch (letzte Änderung)."
+          - { label: Aktuell bis, name: aktuell_bis, widget: datetime, required: false, time_format: false, format: "YYYY-MM-DD", hint: "Ab dem Tag danach verschwindet die Zeile von selbst. Leer = bleibt stehen." }
           - { label: Zitat in der Fußzeile, name: footer_quote, widget: string }
           - { label: Text unten rechts, name: footer_credit, widget: string }
           - { label: E-Mail-Adresse, name: email, widget: string }

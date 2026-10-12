@@ -30,13 +30,14 @@
 }
 
 :root {
-	--bg: #111111;
-	--text: rgba(255, 255, 255, 0.85);
-	--text-dim: rgba(255, 255, 255, 0.75);
-	--line: rgba(255, 255, 255, 0.4);
+	--ink: 255, 255, 255;
+	--bg: #0a0b1d; /* night blue, picks up the UV light of the installations */
+	--text: rgb(var(--ink));
+	--text-dim: rgba(var(--ink), 0.8);
+	--line: rgb(var(--ink));
 	--link: #0000ff;
 	--gutter: 0.5rem;
-	--side: 0.8rem;
+	--side: 6vw;
 	--bar-h: 2.1rem;
 	--sans: "Geist", "Helvetica Neue", Arial, sans-serif;
 	--mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -56,18 +57,18 @@ html {
 	box-sizing: border-box;
 }
 
-/* ---------- scrollbar: hairline thumb, blue on hover ---------- */
+/* ---------- scrollbar: hairline thumb, wide and blue on hover ---------- */
 
 ::-webkit-scrollbar {
-	width: 7px;
-	height: 7px;
+	width: 12px;
+	height: 12px;
 }
 ::-webkit-scrollbar-track {
 	background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.22);
-	border-left: 3px solid var(--bg);
+	background: rgba(var(--ink), 0.22);
+	border-left: 8px solid var(--bg);
 	background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover,
@@ -81,7 +82,7 @@ html {
 @supports not selector(::-webkit-scrollbar) {
 	html {
 		scrollbar-width: thin;
-		scrollbar-color: rgba(255, 255, 255, 0.22) var(--bg);
+		scrollbar-color: rgba(var(--ink), 0.22) var(--bg);
 	}
 }
 
@@ -91,15 +92,37 @@ body {
 	color: var(--text);
 	font-family: var(--sans);
 	font-size: 1.1rem;
-	font-weight: 480;
+	font-weight: 340; /* running text light … */
 	line-height: 1.1;
 	letter-spacing: -0.012em;
 	-webkit-font-smoothing: antialiased;
+	cursor: crosshair;
+}
+/* … bars and headings stay normal */
+.bar,
+.intro h1,
+.statement-title,
+.cv h1,
+.cv h2 {
+	font-weight: 480;
+}
+body *,
+.gallery figure {
+	cursor: crosshair;
+}
+
+::selection {
+	background: var(--link);
+	color: #fff;
 }
 
 a {
 	color: var(--link);
 	text-decoration: none;
+}
+a:not(.home):hover {
+	background: var(--link);
+	color: var(--bg);
 }
 a.home {
 	color: inherit;
@@ -156,6 +179,25 @@ em {
 	top: 0;
 	border-bottom: 0.1rem solid var(--line);
 }
+.bar--top nav a.is-active {
+	color: var(--text);
+}
+.aktuell {
+	margin-left: 2.5em;
+}
+.aktuell a {
+	color: var(--link);
+}
+.progress {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -0.1rem;
+	height: 0.1rem;
+	background: var(--link);
+	transform: scaleX(0);
+	transform-origin: left;
+}
 .bar--bottom {
 	bottom: 0;
 	border-top: 0.1rem solid var(--line);
@@ -171,12 +213,31 @@ section,
 	scroll-margin-top: var(--bar-h);
 }
 
+/* ---------- opening sentence ---------- */
+
+.hero {
+	margin: 0;
+	padding: 11vh 0 9vh;
+	max-width: 18ch;
+	font-size: 4.2vw;
+	font-weight: 520;
+	line-height: 0.95;
+	letter-spacing: -0.045em;
+}
+
 /* ---------- text blocks ---------- */
 
 .intro {
-	padding: 0.8rem 0 0.6rem;
+	padding: 1rem 0 0.6rem;
+	border-top: 0.4rem solid var(--link);
 	border-bottom: 0.1rem solid var(--line);
 	margin-bottom: 0.6rem;
+}
+.intro h1 {
+	grid-column: span 6;
+}
+.intro .span-4 {
+	grid-column: 7 / span 6;
 }
 .intro h1,
 .statement h2 {
@@ -206,16 +267,41 @@ section,
 	padding-bottom: 8rem;
 }
 .gallery figure {
+	position: relative;
 	margin: 0;
 	/* JS sets the exact width; this is the no-JS fallback */
 	width: calc(25% - var(--gutter));
-	cursor: zoom-in;
+	transition: opacity 0.8s ease;
+}
+.reveal .gallery figure:not(.is-in) {
+	opacity: 0;
 }
 .gallery img {
 	display: block;
 	width: 100%;
 	height: auto;
-	background: rgba(255, 255, 255, 0.04);
+	border-radius: 0.45rem;
+	background: rgba(var(--ink), 0.04);
+	filter: contrast(1.105) saturate(1.105);
+}
+.gallery figure:hover img {
+	outline: 2px solid var(--link);
+	outline-offset: -2px;
+}
+/* fixed figure number in the corner, e.g. "fig. SKI-26.03" */
+.gallery figure[data-fig]::before {
+	content: "fig. " attr(data-fig);
+	position: absolute;
+	top: 0.45rem;
+	left: 0.6rem;
+	z-index: 1;
+	font: 400 0.75rem var(--mono);
+	color: #fff;
+	pointer-events: none;
+}
+/* build.js marks images with a bright top-left corner */
+.gallery figure.on-light::before {
+	color: #000;
 }
 .caption,
 .gallery figcaption {
@@ -229,7 +315,7 @@ section,
 	font-weight: 400;
 	line-height: 1.35;
 	letter-spacing: 0;
-	color: var(--text-dim);
+	color: var(--text);
 }
 
 figcaption p {
@@ -272,7 +358,7 @@ figcaption p + p {
 	font-weight: 650;
 	line-height: 0.75;
 	letter-spacing: -0.022em;
-	color: rgba(255, 255, 255, 0.06);
+	color: rgba(var(--ink), 0.06);
 	white-space: nowrap;
 	font-size: 17vw; /* JS refines this to fit exactly */
 	overflow: hidden;
@@ -285,6 +371,7 @@ figcaption p + p {
 	margin: 0 0 1rem;
 }
 .legal-page {
+	margin-top: 2.5rem;
 	padding-bottom: 6rem;
 }
 .legal-page h2 {
@@ -319,8 +406,10 @@ figcaption p + p {
 	display: none;
 	align-items: center;
 	justify-content: center;
-	padding: 12rem;
-	background: var(--bg);
+	padding: 3rem 5rem;
+	background: rgba(10, 11, 29, 0.7);
+	-webkit-backdrop-filter: blur(22px);
+	backdrop-filter: blur(22px);
 }
 .lightbox.open {
 	display: flex;
@@ -333,29 +422,177 @@ figcaption p + p {
 }
 .lb-btn {
 	position: absolute;
-	width: 30px;
-	height: 30px;
+	z-index: 2;
 	padding: 0;
 	border: 0;
-	border-radius: 50%;
-	background: rgba(168, 168, 168, 0.6);
-	color: rgba(0, 0, 0, 0.9);
-	cursor: pointer;
-	display: grid;
-	place-items: center;
+	background: none;
+	color: var(--text);
+	font: 400 0.85rem var(--mono);
+	opacity: 0.85;
 }
+.lb-btn:hover { opacity: 1; }
 .lb-btn:active { opacity: 0.7; }
-.lb-btn svg {
-	width: 14px;
-	height: 14px;
-	stroke: currentColor;
-	stroke-width: 1.5;
-	fill: none;
+.lb-btn svg { display: none; }
+.lb-close::after { content: "schließen ×"; }
+.lb-prev::after { content: "← zurück"; }
+.lb-next::after { content: "weiter →"; }
+.lb-meta {
+	position: absolute;
+	left: 20px;
+	right: 90px;
+	bottom: 18px;
+	z-index: 2;
+	display: flex;
+	gap: 1.6rem;
+	align-items: baseline;
+	font: 400 0.8rem/1.35 var(--mono);
+	color: var(--text-dim);
 }
+.lb-count { color: var(--text); white-space: nowrap; }
 .lb-close { top: 20px; right: 20px; }
 .lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
 .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
 body.lb-open { overflow: hidden; }
+
+/* ---------- Laborelemente (assets/labor.js) ---------- */
+
+/* 1 · Zerfall: hairlines become SVG backgrounds that wander and break up, fig. numbers drift */
+.zerfall .bar--top { border-bottom-color: transparent; }
+.zerfall .bar--bottom { border-top-color: transparent; }
+.zerfall .intro {
+	position: relative;
+	border-color: transparent;
+}
+.zerfall .intro::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: calc(-1 * var(--shard-top, 0px));
+	height: var(--shard-h, 0px);
+	background: var(--shard, none) no-repeat left top / 100% 100%;
+	pointer-events: none;
+}
+.zerfall .gallery figcaption { border-color: transparent; }
+.zerfall .gallery figure[data-fig]::before {
+	content: "fig. " attr(data-fig-z);
+	transform: translate(var(--fx, 0), var(--fy, 0));
+}
+.wm-drawn .wordmark { color: transparent; }
+.wm-canvas {
+	position: absolute;
+	z-index: 0;
+	pointer-events: none;
+	opacity: 0.4;
+}
+
+/* 2 · Beobachtereffekt */
+.gallery img {
+	transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* 3 · Messinstrument (only with a mouse) */
+.mess .h,
+.mess .v {
+	position: fixed;
+	z-index: 50;
+	pointer-events: none;
+	background: rgba(var(--ink), 0.16);
+}
+.mess .h { left: 0; right: 0; top: 0; height: 1px; }
+.mess .v { top: 0; bottom: 0; left: 0; width: 1px; }
+.mess .out {
+	position: fixed;
+	z-index: 50;
+	left: var(--side);
+	bottom: calc(var(--bar-h) + 1.4rem);
+	padding: 0.4rem 0.6rem 0.45rem 0;
+	background: var(--bg);
+	font: 400 0.75rem/1.45 var(--mono);
+	white-space: pre;
+	pointer-events: none;
+}
+
+/* 4 · Geiger: sparks, sound question, sound switch */
+.funken {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+}
+button.ton {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--link);
+	font: inherit;
+	letter-spacing: inherit;
+}
+button.ton:hover {
+	background: var(--link);
+	color: var(--bg);
+}
+.ton-frage {
+	position: fixed;
+	inset: 0;
+	z-index: 150;
+	display: grid;
+	place-items: center;
+	padding: var(--side);
+	background: rgba(10, 11, 29, 0.55);
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+}
+.ton-box {
+	max-width: 24rem;
+	padding: 1rem 1.2rem 1.1rem;
+	background: var(--bg);
+	border: 0.1rem solid var(--line);
+	border-top: 0.4rem solid var(--link);
+	font: 400 0.85rem/1.45 var(--mono);
+}
+.ton-box p { margin: 0 0 1rem; }
+.ton-box p:last-child { margin: 0; display: flex; gap: 1.6rem; }
+.ton-box button {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--link);
+	font: inherit;
+}
+.ton-box button:hover,
+.ton-box button:focus-visible {
+	background: var(--link);
+	color: var(--bg);
+	outline: 0;
+}
+
+/* 5 · Feld am Seitenende */
+.feld {
+	position: relative;
+	height: 62svh;
+	margin-top: 3rem;
+	border-top: 0.1rem solid var(--line);
+	border-bottom: 0.1rem solid var(--line);
+}
+.feld canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+.feld p {
+	position: absolute;
+	left: 0;
+	bottom: 0.6rem;
+	margin: 0;
+	padding: 0.2rem 0.4rem 0.2rem 0;
+	background: var(--bg);
+	font: 400 0.8rem var(--mono);
+	pointer-events: none;
+}
 
 /* ---------- mobile ---------- */
 
@@ -366,6 +603,19 @@ body.lb-open { overflow: hidden; }
 	:root {
 		--side: 0.8rem;
 	}
+	.hero {
+		padding: 8vh 0 6vh;
+		font-size: 9vw;
+	}
+	.intro h1,
+	.intro .span-4 {
+		grid-column: auto;
+	}
+	.aktuell {
+		display: block;
+		margin: 0.2em 0 0;
+	}
+	.lb-meta { bottom: 12px; left: 12px; right: 12px; flex-direction: column; gap: 0.3rem; }
 	.bar .desktop-only { display: none; }
 	.bar .mobile-only { display: grid; }
 	.bar .cols { grid-template-columns: 1fr auto; }

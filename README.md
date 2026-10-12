@@ -10,7 +10,7 @@ GitHub rebuilds and publishes the site automatically; changes are live after ~1�
 
 - **Werke** — Installation / Flat Works / Other: intro text, images, captions, order (drag & drop)
 - **Texte** — Artist Statement, CV
-- **Einstellungen** — header date, footer texts, email, Google description, Impressum, Datenschutz
+- **Einstellungen** — "Aktuell" line (optional, with end date), footer texts, email, Google description, Impressum, Datenschutz
 
 Uploaded photos are converted to WebP (max. 2400 px) automatically.
 

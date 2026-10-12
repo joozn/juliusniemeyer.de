@@ -4,46 +4,57 @@
   "images": [
     {
       "image": "/images/other-01-rend-bear.webp",
+      "fig": "KYK-25.01",
       "caption": "“kyklos” (2025) - in realisation Isarbalkone in Munich, stainless steel"
     },
     {
       "image": "/images/other-02-rend.webp",
+      "fig": "PHA-25.01",
       "caption": "“phaos” (2025) - Proposal Art in Construction DLR (Deutsches Zentrum für Luft- und Raumfahrt)"
     },
     {
       "image": "/images/other-03-rend-2.webp",
+      "fig": "PHA-25.02",
       "caption": "“phaos” (2025) - Proposal Art in Construction DLR (Deutsches Zentrum für Luft- und Raumfahrt)"
     },
     {
       "image": "/images/other-04-visualisierung-wasserbecken.webp",
+      "fig": "AKR-25.01",
       "caption": "“aktionsraum” (2025) - 2. Price TH Darmstadt Proposal Art in Construction"
     },
     {
       "image": "/images/other-05-visualisierung-aktionsraum.webp",
+      "fig": "AKR-25.02",
       "caption": "“aktionsraum” (2025) - 2. Price TH Darmstadt Proposal Art in Construction"
     },
     {
       "image": "/images/other-06-rend-4.webp",
+      "fig": "SCN-25.01",
       "caption": "“sicut nubes” (2025) - Proposal Art in Construction St. Maria Stuttgart"
     },
     {
       "image": "/images/other-07-rend-5.webp",
+      "fig": "SCN-25.02",
       "caption": "“sicut nubes” (2025) - Proposal Art in Construction St. Maria Stuttgart"
     },
     {
       "image": "/images/other-08-visualisierung-aktionsraum.webp",
+      "fig": "AKR-25.03",
       "caption": "“aktionsraum” (2025) - 2. Price TH Darmstadt Proposal Art in Construction"
     },
     {
       "image": "/images/other-09-rend.webp",
+      "fig": "TRA-25.01",
       "caption": "“trace” (2025) - Proposal Art in Construction RWTH Aachen Ersatzneubau Georessourcen"
     },
     {
       "image": "/images/other-10-rendering.webp",
+      "fig": "CLS-24.01",
       "caption": "“closed system” (2024) - Realised Art in Construction Landesgartenschau Kirchheim"
     },
     {
       "image": "/images/other-11-rendering-4.webp",
+      "fig": "CLS-24.02",
       "caption": "“closed system” (2024) - Realised Art in Construction Landesgartenschau Kirchheim"
     }
   ]

@@ -6,6 +6,18 @@
 		a.href = `mailto:${a.dataset.u}@${a.dataset.d}`;
 	});
 
+	// "Aktuell" line disappears by itself after its end date
+	document.querySelectorAll('.aktuell[data-bis]').forEach((el) => {
+		const end = new Date(`${el.dataset.bis.slice(0, 10)}T23:59:59`);
+		if (end < new Date()) el.remove();
+	});
+
+	// the top bar can wrap onto two lines; content and anchor jumps follow its real height
+	const topBar = document.querySelector('.bar--top');
+	if (topBar) {
+		new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', `${topBar.offsetHeight}px`)).observe(topBar);
+	}
+
 	const mobile = window.matchMedia('(max-width: 768px)');
 	const rem = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
 
@@ -82,6 +94,46 @@
 	document.fonts && document.fonts.ready.then(schedule);
 	layout();
 
+	/* ---------- scroll: progress line, active section ---------- */
+
+	const root = document.documentElement;
+	const progress = document.querySelector('.progress');
+	const navLinks = [...document.querySelectorAll('.bar--top nav a')];
+	const sections = navLinks.map((a) => document.getElementById(a.hash.slice(1)));
+	function onScroll() {
+		const max = root.scrollHeight - innerHeight;
+		if (progress) progress.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+		let cur = -1;
+		sections.forEach((s, i) => {
+			if (s && s.getBoundingClientRect().top < innerHeight * 0.45) cur = i;
+		});
+		navLinks.forEach((a, i) => a.classList.toggle('is-active', i === cur));
+	}
+	addEventListener('scroll', onScroll, { passive: true });
+	addEventListener('resize', onScroll, { passive: true });
+	onScroll();
+
+	/* ---------- images fade in one after another while scrolling ---------- */
+
+	if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		const io = new IntersectionObserver(
+			(entries) =>
+				entries.forEach((e) => {
+					if (!e.isIntersecting) return;
+					setTimeout(() => e.target.classList.add('is-in'), (+e.target.dataset.i % 4) * 110);
+					io.unobserve(e.target);
+				}),
+			{ rootMargin: '0px 0px -8% 0px' }
+		);
+		galleries.forEach((g) =>
+			[...g.children].forEach((f, i) => {
+				f.dataset.i = i;
+				io.observe(f);
+			})
+		);
+		root.classList.add('reveal');
+	}
+
 	/* ---------- lightbox ---------- */
 
 	const lb = document.querySelector('.lightbox');
@@ -98,8 +150,9 @@
 		const img = current[index].querySelector('img');
 		lbImg.src = img.dataset.full || img.currentSrc || img.src;
 		lbImg.alt = img.alt;
-		if (lbCaption) lbCaption.innerHTML = current[index].querySelector('figcaption')?.innerHTML ?? '';
-		if (lbCount) lbCount.textContent = `${index + 1} / ${current.length}`;
+		// first caption paragraph only (title, year, place)
+		if (lbCaption) lbCaption.innerHTML = current[index].querySelector('figcaption p')?.innerHTML ?? '';
+		if (lbCount) lbCount.textContent = `fig. ${current[index].dataset.fig} · ${index + 1} / ${current.length}`;
 		// warm up the neighbours
 		[index + 1, index - 1].forEach((n) => {
 			const next = current[(n + current.length) % current.length].querySelector('img');

@@ -2,6 +2,7 @@
 // Run: npm run build   (GitHub Actions runs the same on every push)
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 const sharp = require('sharp');
 const { marked } = require('marked');
 
@@ -21,6 +22,57 @@ const works = [
 const statement = read('statement.json');
 const cv = read('cv.json');
 const legal = ['impressum', 'datenschutz'].map((n) => ({ name: n, ...read(`legal/${n}.json`) }));
+
+// Date top right = state of the document: day of the last commit (falls back to today).
+const stand = (() => {
+	let d;
+	try {
+		d = new Date(execSync('git log -1 --format=%cI', { encoding: 'utf8' }).trim());
+	} catch {}
+	if (!d || isNaN(d)) d = new Date();
+	return d.toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: '2-digit' });
+})();
+
+// Optional announcement next to the name; hidden by main.js after "aktuell_bis".
+const aktuell = (site.aktuell || '').trim()
+	? `<span class="aktuell"${site.aktuell_bis ? ` data-bis="${esc(site.aktuell_bis)}"` : ''}>Aktuell: ${mdInline(site.aktuell.trim())}</span>`
+	: '';
+
+/* ---------- figure numbers ----------
+   Each image has a fixed "fig" code: PROJECT-YY.NN, e.g. SKI-26.03 = skia, 2026, image 3 of that project.
+   Stored in content/works/*.json so it never changes when works are added or reordered. Images without one
+   (new uploads) get the next free number of their project, or a new code from the title's initials. */
+
+const workTitle = (caption = '') => (caption.match(/[“"]([^”"]+)[”"]/) || [])[1]?.toLowerCase().trim();
+function assignFigs() {
+	const all = works.flatMap((w) => w.images || []);
+	const prefixOf = {}; // title -> PROJECT-YY
+	const max = {}; // PROJECT-YY -> highest number
+	all.forEach((it) => {
+		const m = (it.fig || '').match(/^(.+)\.(\d+)$/);
+		if (!m) return;
+		const t = workTitle(it.caption);
+		if (t && !prefixOf[t]) prefixOf[t] = m[1];
+		max[m[1]] = Math.max(max[m[1]] || 0, +m[2]);
+	});
+	let prev = 'X-00';
+	all.forEach((it) => {
+		const t = workTitle(it.caption);
+		if (!it.fig) {
+			let prefix = t ? prefixOf[t] : prev;
+			if (!prefix) {
+				const letters = t.normalize('NFD').replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+				const code = (letters.length >= 3 ? letters.map((l) => l[0]).join('') : letters.join('')).slice(0, 3).toUpperCase();
+				const year = ((it.caption || '').match(/\((\d{4})\)/) || [, String(new Date().getFullYear())])[1].slice(2);
+				prefix = prefixOf[t] = `${code}-${year}`;
+			}
+			max[prefix] = (max[prefix] || 0) + 1;
+			it.fig = `${prefix}.${String(max[prefix]).padStart(2, '0')}`;
+			console.log(`  fig ${it.fig} (neu, noch nicht gespeichert): ${it.image}`);
+		}
+		prev = it.fig.replace(/\.\d+$/, '');
+	});
+}
 
 const [mailUser, mailDomain] = site.email.split('@');
 const emailLink = (label) => `<a href="#" data-u="${esc(mailUser)}" data-d="${esc(mailDomain)}">${label}</a>`;
@@ -52,11 +104,23 @@ async function processImages() {
 				await img.clone().resize({ width: 1200, height: 1200, fit: 'inside', withoutEnlargement: true }).webp({ quality: 78 }).toFile(small);
 			}
 			const { width, height } = await sharp(big).metadata();
-			done.set(src, { big: `images/${base}-2400.webp`, small: `images/${base}-1200.webp`, width, height });
+			done.set(src, { big: `images/${base}-2400.webp`, small: `images/${base}-1200.webp`, width, height, light: await cornerIsLight(small) });
 		}
 	};
 	await Promise.all(Array.from({ length: 6 }, worker));
 	return done;
+}
+
+// Is the area under the fig. number (top-left, about 0.3 × 0.08 of the row height) bright?
+// Then the number is set in black instead of white – whichever has more contrast.
+async function cornerIsLight(file) {
+	const { width, height } = await sharp(file).metadata();
+	const { channels } = await sharp(file)
+		.extract({ left: 0, top: 0, width: Math.min(width, Math.round(height * 0.3)), height: Math.max(1, Math.round(height * 0.08)) })
+		.stats();
+	const lin = (c) => ((c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+	const [r, g, b] = channels.map((c) => lin(c.mean));
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.179;
 }
 
 /* ---------- shared page parts ---------- */
@@ -69,8 +133,9 @@ const head = ({ title, description, lang = 'en', robots = 'index, follow', extra
 	<title>${esc(title)}</title>
 	<meta name="description" content="${esc(description)}">
 	<meta name="robots" content="${robots}">
-	<meta name="theme-color" content="#111111">
+	<meta name="theme-color" content="#0a0b1d">
 	<link rel="icon" href="favicon.ico" sizes="any">
+	<link rel="icon" href="favicon.svg" type="image/svg+xml">
 	<link rel="preload" href="assets/fonts/Geist.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="assets/style.css">
 ${extra}</head>
@@ -81,14 +146,15 @@ const worksNav = `Works: ${works.map((w) => `<a href="./#${w.anchor}">${esc(w.ti
 
 const header = `<header class="bar bar--top">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-8"><a href="./#top" class="home">studioniemeyer</a></div>
+		<div class="span-8"><a href="./#top" class="home">studioniemeyer</a>${aktuell}</div>
 		<nav class="span-2" aria-label="Works">${worksNav}</nav>
-		<div class="span-2 right">${esc(site.date)}</div>
+		<div class="span-2 right">${stand}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
-		<div><a href="./#top" class="home">studioniemeyer</a></div>
-		<div class="right">${esc(site.date)}</div>
+		<div><a href="./#top" class="home">studioniemeyer</a>${aktuell}</div>
+		<div class="right">${stand}</div>
 	</div>
+	<div class="progress" aria-hidden="true"></div>
 </header>
 `;
 
@@ -107,6 +173,7 @@ const footer = `<footer class="bar bar--bottom">
 
 const lightbox = `<div class="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
 	<img alt="">
+	<div class="lb-meta"><span class="lb-count"></span><span class="lb-caption"></span></div>
 	<button class="lb-btn lb-close" type="button" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
 	<button class="lb-btn lb-prev" type="button" aria-label="Previous image"><svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5"/></svg></button>
 	<button class="lb-btn lb-next" type="button" aria-label="Next image"><svg viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/></svg></button>
@@ -123,7 +190,7 @@ function indexPage(img) {
 				const im = img.get(it.image);
 				const caption = (it.caption || '').trim();
 				const alt = plain(caption.split('\n')[0]);
-				return `		<figure>
+				return `		<figure data-fig="${esc(it.fig)}"${im.light ? ' class="on-light"' : ''}>
 			<img src="${im.small}" data-full="${im.big}" width="${im.width}" height="${im.height}" alt="${esc(alt)}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async">
 ${caption ? `			<figcaption>${md(caption).trim()}</figcaption>\n` : ''}		</figure>`;
 			})
@@ -161,6 +228,8 @@ ${gallery(w)}
 ${header}
 <main id="top">
 
+	<p class="hero">${esc(site.footer_quote)}</p>
+
 ${sections}
 	<section id="artist-statement" class="statement">
 		<hr>
@@ -179,6 +248,7 @@ ${sections}
 		</div>
 	</section>
 
+	<section class="feld" hidden><canvas aria-hidden="true"></canvas><p></p></section>
 	<p class="wordmark" aria-hidden="true">studioniemeyer</p>
 	<p class="legal mobile-legal"><a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de</a>, <a href="impressum.html">Impressum</a>, <a href="datenschutz.html">Datenschutz</a></p>
 
@@ -187,6 +257,7 @@ ${sections}
 ${footer}
 ${lightbox}
 <script src="assets/main.js" defer></script>
+<script src="assets/labor.js" defer></script>
 </body>
 </html>
 `;
@@ -216,10 +287,11 @@ ${footer}
 (async () => {
 	const t = Date.now();
 	fs.mkdirSync(OUT, { recursive: true });
-	for (const f of ['assets', 'admin', 'favicon.ico', 'og-image.jpg', 'CNAME']) {
+	for (const f of ['assets', 'admin', 'favicon.ico', 'favicon.svg', 'og-image.jpg', 'CNAME']) {
 		if (fs.existsSync(f)) fs.cpSync(f, path.join(OUT, f), { recursive: true });
 	}
 	const img = await processImages();
+	assignFigs();
 	fs.writeFileSync(path.join(OUT, 'index.html'), indexPage(img));
 	legal.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');

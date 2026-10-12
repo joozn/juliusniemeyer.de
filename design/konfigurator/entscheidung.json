@@ -1,0 +1,333 @@
+{
+	"datum": "2026-10-12 09:02",
+	"entscheidungen": [
+		{
+			"id": "grund",
+			"gruppe": "Grundstimmung",
+			"titel": "Hintergrund",
+			"option": "nacht",
+			"wahl": "Nachtblau",
+			"orig": false
+		},
+		{
+			"id": "text",
+			"gruppe": "Grundstimmung",
+			"titel": "Textkontrast",
+			"option": "voll",
+			"wahl": "Voll",
+			"orig": false
+		},
+		{
+			"id": "akzent",
+			"gruppe": "Grundstimmung",
+			"titel": "Akzentfarbe",
+			"option": "orig",
+			"wahl": "Reinblau",
+			"orig": true
+		},
+		{
+			"id": "links",
+			"gruppe": "Grundstimmung",
+			"titel": "Linkstil",
+			"option": "block",
+			"wahl": "Hinterlegt beim Überfahren",
+			"orig": false
+		},
+		{
+			"id": "linien",
+			"gruppe": "Grundstimmung",
+			"titel": "Haarlinien",
+			"option": "orig",
+			"wahl": "Deutlich",
+			"orig": true
+		},
+		{
+			"id": "textur",
+			"gruppe": "Grundstimmung",
+			"titel": "Oberfläche",
+			"option": "orig",
+			"wahl": "Glatt",
+			"orig": true
+		},
+		{
+			"id": "auswahl",
+			"gruppe": "Grundstimmung",
+			"titel": "Textauswahl",
+			"option": "akzent",
+			"wahl": "Akzentfarbe",
+			"orig": false
+		},
+		{
+			"id": "schrift",
+			"gruppe": "Schrift",
+			"titel": "Schriftfamilie",
+			"option": "orig",
+			"wahl": "Geist",
+			"orig": true
+		},
+		{
+			"id": "groesse",
+			"gruppe": "Schrift",
+			"titel": "Textgröße",
+			"option": "orig",
+			"wahl": "Mittel",
+			"orig": true
+		},
+		{
+			"id": "gewicht",
+			"gruppe": "Schrift",
+			"titel": "Schriftstärke",
+			"option": "orig",
+			"wahl": "Normal",
+			"orig": true
+		},
+		{
+			"id": "zeilen",
+			"gruppe": "Schrift",
+			"titel": "Zeilenabstand",
+			"option": "orig",
+			"wahl": "Eng",
+			"orig": true
+		},
+		{
+			"id": "laufweite",
+			"gruppe": "Schrift",
+			"titel": "Laufweite",
+			"option": "orig",
+			"wahl": "Leicht eng",
+			"orig": true
+		},
+		{
+			"id": "titel",
+			"gruppe": "Schrift",
+			"titel": "Werktitel",
+			"option": "orig",
+			"wahl": "Wie Fließtext",
+			"orig": true
+		},
+		{
+			"id": "intro",
+			"gruppe": "Schrift",
+			"titel": "Werktext",
+			"option": "breit",
+			"wahl": "Breite Spalte rechts",
+			"orig": false
+		},
+		{
+			"id": "bu",
+			"gruppe": "Schrift",
+			"titel": "Bildunterschriften",
+			"option": "orig",
+			"wahl": "Mono mit Winkellinie",
+			"orig": true
+		},
+		{
+			"id": "fig",
+			"gruppe": "Schrift",
+			"titel": "Bildnummern",
+			"option": "aufbild",
+			"wahl": "Nummer auf dem Bild",
+			"orig": false
+		},
+		{
+			"id": "kopf",
+			"gruppe": "Aufbau",
+			"titel": "Obere Leiste",
+			"option": "orig",
+			"wahl": "Fest, deckend",
+			"orig": true
+		},
+		{
+			"id": "fuss",
+			"gruppe": "Aufbau",
+			"titel": "Untere Leiste",
+			"option": "orig",
+			"wahl": "Immer sichtbar",
+			"orig": true
+		},
+		{
+			"id": "datum",
+			"gruppe": "Aufbau",
+			"titel": "Oben rechts",
+			"option": "orig",
+			"wahl": "Datum",
+			"orig": true
+		},
+		{
+			"id": "nav",
+			"gruppe": "Aufbau",
+			"titel": "Navigation",
+			"option": "aktiv",
+			"wahl": "Aktiver Abschnitt hell",
+			"orig": false
+		},
+		{
+			"id": "fortschritt",
+			"gruppe": "Aufbau",
+			"titel": "Fortschritt",
+			"option": "linie",
+			"wahl": "Linie unter der Leiste",
+			"orig": false
+		},
+		{
+			"id": "start",
+			"gruppe": "Aufbau",
+			"titel": "Seitenanfang",
+			"option": "satz",
+			"wahl": "Ein Satz",
+			"orig": false
+		},
+		{
+			"id": "rand",
+			"gruppe": "Aufbau",
+			"titel": "Seitenrand",
+			"option": "breit",
+			"wahl": "Breit",
+			"orig": false
+		},
+		{
+			"id": "trenner",
+			"gruppe": "Aufbau",
+			"titel": "Zwischen den Werkgruppen",
+			"option": "balken",
+			"wahl": "Dicke Akzentlinie",
+			"orig": false
+		},
+		{
+			"id": "statement",
+			"gruppe": "Aufbau",
+			"titel": "Artist Statement",
+			"option": "orig",
+			"wahl": "Drei Spalten",
+			"orig": true
+		},
+		{
+			"id": "cv",
+			"gruppe": "Aufbau",
+			"titel": "Lebenslauf",
+			"option": "orig",
+			"wahl": "Drei Spalten Grotesk",
+			"orig": true
+		},
+		{
+			"id": "wortmarke",
+			"gruppe": "Aufbau",
+			"titel": "Wortmarke unten",
+			"option": "orig",
+			"wahl": "Kaum sichtbar",
+			"orig": true
+		},
+		{
+			"id": "galerie",
+			"gruppe": "Bilder",
+			"titel": "Galerie-Anordnung",
+			"option": "orig",
+			"wahl": "Blocksatz-Reihen",
+			"orig": true
+		},
+		{
+			"id": "reihe",
+			"gruppe": "Bilder",
+			"titel": "Reihenhöhe",
+			"option": "orig",
+			"wahl": "Mittel",
+			"orig": true
+		},
+		{
+			"id": "abstand",
+			"gruppe": "Bilder",
+			"titel": "Bildabstand",
+			"option": "orig",
+			"wahl": "Schmal",
+			"orig": true
+		},
+		{
+			"id": "bildfarbe",
+			"gruppe": "Bilder",
+			"titel": "Bildbehandlung",
+			"option": "kontrast",
+			"wahl": "Mehr Kontrast",
+			"orig": false
+		},
+		{
+			"id": "kante",
+			"gruppe": "Bilder",
+			"titel": "Bildkante",
+			"option": "rund",
+			"wahl": "Leicht gerundet",
+			"orig": false
+		},
+		{
+			"id": "hover",
+			"gruppe": "Bilder",
+			"titel": "Überfahren mit der Maus",
+			"option": "rahmen",
+			"wahl": "Rahmen in Akzentfarbe",
+			"orig": false
+		},
+		{
+			"id": "einblenden",
+			"gruppe": "Bilder",
+			"titel": "Erscheinen beim Scrollen",
+			"option": "blende",
+			"wahl": "Weich einblenden",
+			"orig": false
+		},
+		{
+			"id": "lbgrund",
+			"gruppe": "Großansicht",
+			"titel": "Hintergrund der Großansicht",
+			"option": "glas",
+			"wahl": "Durchscheinend",
+			"orig": false
+		},
+		{
+			"id": "lbgroesse",
+			"gruppe": "Großansicht",
+			"titel": "Bildgröße in der Großansicht",
+			"option": "gross",
+			"wahl": "Groß",
+			"orig": false
+		},
+		{
+			"id": "lbsteuer",
+			"gruppe": "Großansicht",
+			"titel": "Bedienung der Großansicht",
+			"option": "text",
+			"wahl": "Wörter in Mono",
+			"orig": false
+		},
+		{
+			"id": "lbinfo",
+			"gruppe": "Großansicht",
+			"titel": "Info in der Großansicht",
+			"option": "voll",
+			"wahl": "Zähler und Bildunterschrift",
+			"orig": false
+		},
+		{
+			"id": "cursor",
+			"gruppe": "Details",
+			"titel": "Mauszeiger",
+			"option": "kreuz",
+			"wahl": "Fadenkreuz",
+			"orig": false
+		},
+		{
+			"id": "scrollbar",
+			"gruppe": "Details",
+			"titel": "Scrollbar",
+			"option": "orig",
+			"wahl": "Haarlinie",
+			"orig": true
+		},
+		{
+			"id": "favicon",
+			"gruppe": "Details",
+			"titel": "Zeichen im Browser-Tab",
+			"option": "punkt",
+			"wahl": "Punkt in Akzentfarbe",
+			"orig": false
+		}
+	]
+}

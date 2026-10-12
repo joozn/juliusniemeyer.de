@@ -1,0 +1,65 @@
+/* Laborelemente — prototype styles, not live */
+
+/* ---------- panel ---------- */
+
+.el-panel {
+	position: fixed;
+	right: 1rem;
+	bottom: calc(var(--bar-h) + 1.4rem);
+	z-index: 400;
+	width: min(21rem, calc(100vw - 2rem));
+	padding: 0.7rem 0.8rem 0.8rem;
+	background: var(--bg);
+	border: 0.1rem solid var(--line);
+	font: 400 0.75rem/1.45 var(--mono);
+	color: var(--text);
+}
+.el-panel .head {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 0.5rem;
+}
+.el-panel .head button {
+	background: none;
+	border: 0;
+	padding: 0;
+	color: var(--link);
+	font: inherit;
+}
+.el-panel.min > :not(.head) { display: none; }
+.el-panel.min .head { margin: 0; }
+.el-panel label {
+	display: flex;
+	gap: 0.5rem;
+	align-items: baseline;
+	margin-top: 0.45rem;
+}
+.el-panel input { accent-color: #0000ff; }
+.el-panel .desc {
+	padding-left: 1.55rem;
+	color: var(--text-dim);
+	font-size: 0.68rem;
+}
+.el-panel .days {
+	display: flex;
+	gap: 0.6rem;
+	align-items: center;
+	padding: 0.2rem 0 0 1.55rem;
+}
+.el-panel .days input { flex: 1; min-width: 0; }
+.el-panel .group {
+	margin-top: 0.9rem;
+	padding-top: 0.5rem;
+	border-top: 0.1rem solid rgba(var(--ink), 0.3);
+}
+.el-panel .head + .group { margin-top: 0; padding-top: 0; border-top: 0; }
+.el-panel .test {
+	background: none;
+	border: 0;
+	padding: 0;
+	color: var(--link);
+	font: inherit;
+}
+.el-panel .test:hover { background: var(--link); color: var(--bg); }
+
+/* all elements are live: assets/labor.js + assets/style.css */

@@ -4,7 +4,7 @@ Website von Julius (Künstler). Kommunikation auf Deutsch. Technik und Betrieb s
 
 - Statische Seite: `content/*.json` + `images/` → `node build.js` → `_site/`. Bearbeitung über Sveltia CMS (`/admin`).
 - Push auf `main` = GitHub Actions baut und lädt per rsync auf den Hetzner-Server (`/opt/website/site`).
-- Server-Regeln wie in `C:\dev\backend\CLAUDE.md`: andere Apps nie anfassen, Caddy nur anhängen + validate + reload.
+- Server-Regeln wie in `C:\dev\mainframe\CLAUDE.md`: andere Apps nie anfassen, Caddy nur anhängen + validate + reload.
 - Keine externen CDNs oder Schriften auf der Seite (DSGVO). Schrift: Geist (selbst gehostet).
 - Nach jeder Änderung das Ergebnis in Chrome zeigen (lokal: `npm start` → http://127.0.0.1:4173;
   Port 8080 gehört einer anderen App).
@@ -14,22 +14,34 @@ Website von Julius (Künstler). Kommunikation auf Deutsch. Technik und Betrieb s
 - Testbetrieb auf https://website.studioniemeyer.de (nur mit Mainframe-Login), Kachel „Website“ im Mainframe.
 - juliusniemeyer.de zeigt noch auf Cargo (Nameserver ns1/ns2.cargo.site). Umstellung erst nach ein paar Tagen
   Testbetrieb und Julius' OK: Nameserver bei IONOS zurücksetzen, A-Records `@` und `www` → 46.224.113.239,
-  Caddy-Block durch `deploy/Caddyfile.live.snippet` ersetzen, Kachel-URL in `backend/server/apps.json` anpassen.
+  Caddy-Block durch `deploy/Caddyfile.live.snippet` ersetzen, Kachel-URL in `C:\dev\mainframe\server\apps.json` anpassen.
   Danach kann Julius Cargo kündigen.
 - CMS-Login (GitHub-Zugangsschlüssel) ist noch nicht eingerichtet.
 
-## Offen: Design-Überarbeitung
+## Design: Feinschliff übernommen (12.10.2026)
 
-Prototypen in `design/variants.js` (nicht live): `npm run build && node design/variants.js`, dann
-http://127.0.0.1:4173/varianten.html.
+Julius hat im Konfigurator (`design/konfigurator/`, Wahl in `entscheidung.md`) entschieden; umgesetzt in
+`assets/style.css`, `assets/main.js`, `build.js`. Abweichungen dazu: Fließtext leicht (340), Leisten und Titel normal (480);
+Bildkontrast 70 % der Option; Scrollbar wird beim Überfahren breit in Akzentfarbe; Satz am Anfang kleiner.
+- **Bildnummern** `fig. PROJEKT-JJ.NN` (z. B. SKI-26.03) stehen fest im Feld `fig` in `content/works/*.json`.
+  Nie neu durchnummerieren. Neue Bilder ohne `fig` bekommen beim Build die nächste freie Nummer ihres Projekts.
+- **Datum oben rechts** = Tag des letzten Commits (automatisch). Optional „Aktuell“-Zeile (`aktuell`, `aktuell_bis` in site.json).
 
-- A · Werkindex, B · Projekte, C · Archiv hell (Vektorfeld „Ordnung → Unordnung“, Filter, fig.-Nummern).
-- **Julius findet C am interessantesten – nächster Schritt: C in Schwarz (dunkle Version) ausprobieren,
-  evtl. weitere Varianten.** Entscheidung steht noch aus.
-- Ideen zur Auswahl: eigene Seite pro Werk, DE/EN, Portfolio-PDF, „Aktuell“-Zeile statt Datum oben rechts,
-  Bildunterschriften vereinheitlichen („ - “ vs. „ / “, „2. Price“ → „2nd Prize“), Social-Links.
+## Konzept und Laborelemente
+
+Konzept der Seite (Erscheinung, fig.-Nummern, Laborelemente 1–5, Regeln): **`KONZEPT.md`** – vor Designänderungen lesen.
+Alle fünf Laborelemente sind live in `assets/labor.js` und entschieden. Testpult (Tage simulieren, Feld umschalten):
+`npm run build && node design/elemente/build.js`, dann `node design/konfigurator/server.js` → http://127.0.0.1:4174/elemente.html
+Shop: entschieden und geplant in **`SHOP.md`** (Website + SPINE + Konto + Zentrale + Kontor + Mainframe).
+
+## Design-Prototypen (erledigt)
+
+Varianten A/B/C (`design/variants.js`), Feinschliff (`design/feinschliff.js`) und Konfigurator (`design/konfigurator/`)
+sind abgeschlossen; Julius hat sich für den Feinschliff der bestehenden Seite entschieden (siehe oben, `KONZEPT.md`).
 
 ## Architektur
 
-- Gesamtbild aller Apps (mit Julius entschieden 2026-10-09): `C:\dev\ARCHITEKTUR.md`. Vor Arbeiten an Login, Abo, Kontakten, Projekten, Mailversand oder Terminplanung dort nachlesen; bei Widerspruch Julius fragen.
+- Gesamtbild aller Apps (mit Julius entschieden 2026-10-09). `C:\dev\ARCHITEKTUR.md` gibt es nicht mehr; die Entscheidungen stehen in den
+  Architektur-Abschnitten von `C:\dev\mainframe\CLAUDE.md` (Login, Apps), `C:\dev\02_apps\konto\CLAUDE.md` (Abo, Stripe)
+  und `C:\dev\02_apps\crm\CLAUDE.md` (Zentrale: Kontakte, Projekte, Mailversand). Vor Arbeiten daran dort nachlesen; bei Widerspruch Julius fragen.
 - juliusniemeyer.de zieht im Zielbild von Cargo auf Hetzner (DNS zurück zu IONOS).

@@ -1,0 +1,43 @@
+# Feinschliff – Entscheidung vom 2026-10-12 09:02
+
+- **Hintergrund:** Nachtblau  ← neu
+- **Textkontrast:** Voll  ← neu
+- **Akzentfarbe:** Reinblau
+- **Linkstil:** Hinterlegt beim Überfahren  ← neu
+- **Haarlinien:** Deutlich
+- **Oberfläche:** Glatt
+- **Textauswahl:** Akzentfarbe  ← neu
+- **Schriftfamilie:** Geist
+- **Textgröße:** Mittel
+- **Schriftstärke:** Normal
+- **Zeilenabstand:** Eng
+- **Laufweite:** Leicht eng
+- **Werktitel:** Wie Fließtext
+- **Werktext:** Breite Spalte rechts  ← neu
+- **Bildunterschriften:** Mono mit Winkellinie
+- **Bildnummern:** Nummer auf dem Bild  ← neu
+- **Obere Leiste:** Fest, deckend
+- **Untere Leiste:** Immer sichtbar
+- **Oben rechts:** Datum
+- **Navigation:** Aktiver Abschnitt hell  ← neu
+- **Fortschritt:** Linie unter der Leiste  ← neu
+- **Seitenanfang:** Ein Satz  ← neu
+- **Seitenrand:** Breit  ← neu
+- **Zwischen den Werkgruppen:** Dicke Akzentlinie  ← neu
+- **Artist Statement:** Drei Spalten
+- **Lebenslauf:** Drei Spalten Grotesk
+- **Wortmarke unten:** Kaum sichtbar
+- **Galerie-Anordnung:** Blocksatz-Reihen
+- **Reihenhöhe:** Mittel
+- **Bildabstand:** Schmal
+- **Bildbehandlung:** Mehr Kontrast  ← neu
+- **Bildkante:** Leicht gerundet  ← neu
+- **Überfahren mit der Maus:** Rahmen in Akzentfarbe  ← neu
+- **Erscheinen beim Scrollen:** Weich einblenden  ← neu
+- **Hintergrund der Großansicht:** Durchscheinend  ← neu
+- **Bildgröße in der Großansicht:** Groß  ← neu
+- **Bedienung der Großansicht:** Wörter in Mono  ← neu
+- **Info in der Großansicht:** Zähler und Bildunterschrift  ← neu
+- **Mauszeiger:** Fadenkreuz  ← neu
+- **Scrollbar:** Haarlinie
+- **Zeichen im Browser-Tab:** Punkt in Akzentfarbe  ← neu
