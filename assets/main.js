@@ -1,5 +1,6 @@
 (() => {
 	'use strict';
+	document.documentElement.classList.add('js'); // CSS can tell whether scripts run
 
 	// E-Mail is assembled at runtime so simple spam bots can't scrape it from the HTML.
 	document.querySelectorAll('[data-u][data-d]').forEach((a) => {

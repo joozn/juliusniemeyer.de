@@ -21,6 +21,8 @@ const works = [
 ].map((w) => ({ ...w, ...read(w.file) }));
 const statement = read('statement.json');
 const cv = read('cv.json');
+// works on offer (shop). Example data until SPINE delivers it, see SHOP.md
+const available = read('available.json');
 const legal = ['impressum', 'datenschutz'].map((n) => ({ name: n, ...read(`legal/${n}.json`) }));
 
 // Date top right = state of the document: day of the last commit (falls back to today).
@@ -144,19 +146,24 @@ ${extra}</head>
 
 const worksNav = `Works: ${works.map((w) => `<a href="./#${w.anchor}">${esc(w.title)},</a>`).join(' ')} <a href="./#cv">CV</a>`;
 
-const header = `<header class="bar bar--top">
+// "Available" sits apart from the works, in its own column
+const header = (page) => {
+	const av = `<a href="available.html" class="nav-available${page === 'available' ? ' is-here' : ''}">Available</a>`;
+	return `<header class="bar bar--top">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-8"><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
+		<div class="span-6"><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
+		<div class="span-2">${av}</div>
 		<nav class="span-2" aria-label="Works">${worksNav}</nav>
 		<div class="span-2 right">${stand}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
-		<div><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
+		<div><a href="./#top" class="home">juliusniemeyer</a> ${av}${aktuell}</div>
 		<div class="right">${stand}</div>
 	</div>
 	<div class="progress" aria-hidden="true"></div>
 </header>
 `;
+};
 
 const footer = `<footer class="bar bar--bottom">
 	<div class="cols bar-cols desktop-only">
@@ -224,8 +231,8 @@ ${gallery(w)}
 	<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Julius Niemeyer","url":"https://juliusniemeyer.de/","jobTitle":"Artist","homeLocation":{"@type":"Place","name":"Munich"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Academy of Fine Arts Munich"}}</script>
 `;
 
-	return `${head({ title: 'Studioniemeyer - Julius Niemeyer', description: site.description, extra: ldjson })}
-${header}
+	return `${head({ title: 'Julius Niemeyer', description: site.description, extra: ldjson })}
+${header('index')}
 <main id="top">
 
 	<p class="hero">${esc(site.footer_quote)}</p>
@@ -265,7 +272,7 @@ ${lightbox}
 
 function legalPage(p) {
 	return `${head({ title: `${p.title} - Julius Niemeyer`, description: p.title, lang: 'de', robots: 'noindex, follow' })}
-${header}
+${header('legal')}
 <main>
 	<section class="intro cols legal-page">
 		<h1 class="span-8">${esc(p.title)}</h1>
@@ -282,6 +289,81 @@ ${footer}
 `;
 }
 
+function availablePage(img) {
+	// images by fig. number from the work galleries
+	const byFig = {};
+	works.flatMap((w) => w.images || []).forEach((it) => img.has(it.image) && (byFig[it.fig] = img.get(it.image)));
+	const euro = (n) => `${n.toLocaleString('en-GB')} €`;
+	const price = (w) => (w.capitalistic ? w.preis * 2 ** w.verkauft.length : w.preis);
+
+	const item = (w) => {
+		const im = byFig[w.fig];
+		if (!im) throw new Error(`available.json: no image for fig. ${w.fig}`);
+		const fig = `<figure data-fig="${esc(w.fig)}"${im.light ? ' class="on-light"' : ''}><img src="${im.small}" data-full="${im.big}" width="${im.width}" height="${im.height}" alt="${esc(w.titel)}" loading="lazy" decoding="async"></figure>`;
+		const meta = `<p class="av-title">${esc(w.titel)} (${w.jahr})</p><p>${esc(w.technik)}<br>${esc(w.masse)}</p>`;
+		if (w.art === 'unikat') {
+			return `		<article class="av-item av-unikat" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+			<p class="av-price">unique work · price on request</p>
+			${w.gerahmt ? '<p class="av-frame-incl">framed · frame included</p>' : ''}
+			<noscript><p>Requests need JavaScript — or write an email.</p></noscript>
+			<p><button type="button" class="av-ask">Request</button></p></div></article>`;
+		}
+		// static price line for visitors without JavaScript; available.js renders the live version
+		const soldOut = w.verkauft.length >= w.auflage;
+		const free = w.auflage - w.verkauft.length - w.reserviert.length;
+		const line = `edition of ${w.auflage} + ${w.ap ?? 1} AP · ${soldOut ? 'sold out' : `${free} available · ${euro(price(w))}`}`;
+		return `		<article class="av-item av-edition" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+			<p class="av-price">${line}</p>
+			<p class="av-cap"${w.capitalistic ? '' : ' hidden'}>capitalistic selling — the price doubles with every copy sold</p>
+			<p class="av-label">choose your number</p>
+			<div class="av-numbers" role="group" aria-label="edition numbers"></div>
+			<div class="av-frames" role="radiogroup" aria-label="frame"></div>
+			<p class="av-ship"></p>
+			<noscript><p>Buying needs JavaScript — or write an email.</p></noscript>
+			<p><button type="button" class="av-buy" disabled>Choose a number</button></p></div></article>`;
+	};
+	const editions = available.werke.filter((w) => w.art === 'edition');
+	const unikate = available.werke.filter((w) => w.art === 'unikat');
+
+	return `${head({ title: 'Available - Julius Niemeyer', description: 'Works and editions by Julius Niemeyer currently available.', robots: 'noindex, follow', extra: '	<link rel="stylesheet" href="assets/available.css">\n' })}
+${header('available')}
+<main id="top" class="available">
+
+	<section class="intro cols">
+		<h1 class="span-8">Available</h1>
+		<div class="span-4">
+			<p>Works currently available. <em>Editions</em> can be bought directly within the EU — choose the number you want.
+			<em>Unique works</em> on request: you receive a PDF dossier for each work by email. Shipping outside the EU on request.</p>
+			<p class="av-note">Prices incl. VAT, plus shipping. In Munich: delivery or pickup by appointment. Prototype with example data — nothing is sold here.</p>
+		</div>
+	</section>
+
+	<div class="av-list">
+${editions.map(item).join('\n')}
+	</div>
+
+	<section class="intro cols">
+		<h1 class="span-8">Unique works</h1>
+		<div class="span-4"><p>Request one or several works. You get a dossier per work by email; Julius gets in touch personally.</p></div>
+	</section>
+
+	<div class="av-list">
+${unikate.map(item).join('\n')}
+	</div>
+
+</main>
+
+${footer}
+<div class="av-dialog" hidden role="dialog" aria-modal="true" aria-label="Request"><div class="av-box"></div></div>
+<script type="application/json" id="av-data">${JSON.stringify(available).replace(/</g, '\\u003c')}</script>
+<script src="assets/main.js" defer></script>
+<script src="assets/labor.js" defer></script>
+<script src="assets/available.js" defer></script>
+</body>
+</html>
+`;
+}
+
 /* ---------- build ---------- */
 
 (async () => {
@@ -293,7 +375,8 @@ ${footer}
 	const img = await processImages();
 	assignFigs();
 	fs.writeFileSync(path.join(OUT, 'index.html'), indexPage(img));
+	fs.writeFileSync(path.join(OUT, 'available.html'), availablePage(img));
 	legal.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-	console.log(`built ${img.size} images, ${2 + legal.length - 1} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
+	console.log(`built ${img.size} images, ${2 + legal.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
 })();

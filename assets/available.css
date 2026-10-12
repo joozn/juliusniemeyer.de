@@ -1,6 +1,4 @@
-/* "Available" prototype — not live */
-
-.bar--top nav a.is-here { color: var(--text); }
+/* "Available" page (assets/available.js); example data in content/available.json until SPINE delivers it */
 .available { padding-top: calc(var(--bar-h) + 2.5rem); }
 
 .av-list {
@@ -154,13 +152,12 @@
 .av-frame-incl { color: rgba(var(--ink), 0.6); }
 
 .av-info [hidden] { display: none !important; }
+/* without JavaScript nothing can be chosen or bought; the noscript line explains */
+html:not(.js) .av-label,
+html:not(.js) .av-buy,
+html:not(.js) .av-ask { display: none; }
 .av-ship { margin: 0 0 0.8rem; }
 .av-ship .av-label { display: block; margin-bottom: 0.3rem; }
 .av-ship .av-check { margin-bottom: 0.15rem !important; }
 .av-world-line { display: block; margin-top: 0.3rem; }
 .av-auto { margin: 0; color: var(--text); }
-
-/* "Available" in its own column of the top bar */
-.span-6 { grid-column: span 6; }
-.nav-available { white-space: nowrap; }
-.bar--top .nav-available.is-here { color: var(--text); }

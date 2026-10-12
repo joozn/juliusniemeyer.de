@@ -32,6 +32,7 @@ Bildkontrast 70 % der Option; Scrollbar wird beim Überfahren breit in Akzentfar
 Konzept der Seite (Erscheinung, fig.-Nummern, Laborelemente 1–5, Regeln): **`KONZEPT.md`** – vor Designänderungen lesen.
 Alle fünf Laborelemente sind live in `assets/labor.js` und entschieden. Testpult (Tage simulieren, Feld umschalten):
 `npm run build && node design/elemente/build.js`, dann `node design/konfigurator/server.js` → http://127.0.0.1:4174/elemente.html
+Seite „Available“ (Shop) mit Beispieldaten ist im Build; vor dem Umzug von Cargo echte Daten oder ausblenden.
 Shop: entschieden und geplant in **`SHOP.md`** (Website + SPINE + Konto + Zentrale + Kontor + Mainframe).
 
 ## Design-Prototypen (erledigt)

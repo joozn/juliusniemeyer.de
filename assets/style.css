@@ -38,7 +38,7 @@
 	--link: #0000ff;
 	--gutter: 0.5rem;
 	--side: 6vw;
-	--bar-h: 2.1rem;
+	--bar-h: 3.9rem; /* two lines of nav without JavaScript; main.js sets the measured height */
 	--sans: "Geist", "Helvetica Neue", Arial, sans-serif;
 	--mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
 	color-scheme: dark;
@@ -159,6 +159,7 @@ em {
 	align-items: start;
 }
 .span-8 { grid-column: span 8; }
+.span-6 { grid-column: span 6; }
 .span-4 { grid-column: span 4; }
 .span-2 { grid-column: span 2; }
 .cols.thirds { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -179,9 +180,11 @@ em {
 	top: 0;
 	border-bottom: 0.1rem solid var(--line);
 }
-.bar--top nav a.is-active {
+.bar--top nav a.is-active,
+.bar--top .nav-available.is-here {
 	color: var(--text);
 }
+.nav-available { white-space: nowrap; }
 .aktuell {
 	margin-left: 2.5em;
 }
@@ -360,7 +363,7 @@ figcaption p + p {
 	letter-spacing: -0.022em;
 	color: rgba(var(--ink), 0.06);
 	white-space: nowrap;
-	font-size: 17vw; /* JS refines this to fit exactly */
+	font-size: 12vw; /* JS refines this to fit exactly */
 	overflow: hidden;
 }
 
@@ -602,6 +605,7 @@ button.ton:hover {
 	}
 	:root {
 		--side: 0.8rem;
+		--bar-h: 2.6rem;
 	}
 	.hero {
 		padding: 8vh 0 6vh;
@@ -611,6 +615,7 @@ button.ton:hover {
 	.intro .span-4 {
 		grid-column: auto;
 	}
+	.wordmark { font-size: 13.4vw; }
 	.aktuell {
 		display: block;
 		margin: 0.2em 0 0;

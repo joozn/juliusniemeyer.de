@@ -71,9 +71,10 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
 ## Reihenfolge
 
 1. **Website:** Bereich „Available“ als Prototyp mit Beispieldaten (Unikate mit Anfrage-Ablauf, Editionen mit
-   Nummernwahl und Capitalistic selling). ← **Prototyp steht** (`design/available/`, Daten `beispiel.json` in der
-   Struktur, die später SPINE liefert): `npm run build && node design/available/build.js`, dann
-   `node design/konfigurator/server.js` → http://127.0.0.1:4174/available.html. Wartet auf Julius' Feedback.
+   Nummernwahl und Capitalistic selling). ← **steht**, als Seite `available.html` im normalen Build
+   (`build.js` → `availablePage`, `assets/available.js|css`), Link „Available“ in eigener Spalte der oberen Leiste.
+   Daten noch Beispiel: `content/available.json` (Struktur wie später aus SPINE), Kauf/Anfrage nur simuliert.
+   **Vor dem Umzug von juliusniemeyer.de** Beispieldaten durch SPINE ersetzen oder Seite + Link ausblenden.
 2. **SPINE + Konto:** öffentliche Liste und Reservierung in SPINE, Einmalzahlung in Konto, Testmodus auf dem Server
    (Server-Änderungen nur mit Julius' OK).
 3. **Zentrale, Kontor, Mainframe** anbinden; Rechtstexte (AGB, Widerruf, Versand, Datenschutz); Umzug

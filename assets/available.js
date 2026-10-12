@@ -1,4 +1,4 @@
-// "Available" prototype: edition numbers, capitalistic selling, simulated checkout, request flow for unique works.
+// "Available" page (example data, see SHOP.md): edition numbers, capitalistic selling, simulated checkout, request flow for unique works.
 // Later: list from SPINE (build) + live status from SPINE, checkout via Konto → Stripe, requests → SPINE/Zentrale.
 (() => {
 	'use strict';
