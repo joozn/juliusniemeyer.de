@@ -123,7 +123,9 @@
 .av-sum .total td { border-bottom: 0; font-weight: 600; }
 .av-sum .dim td { color: rgba(var(--ink), 0.6); }
 .av-form label { display: block; margin-bottom: 0.3rem; }
-.av-form input[type="email"] {
+.av-form input[type="email"],
+.av-form input[type="text"],
+.av-form textarea {
 	width: 100%;
 	padding: 0.5rem 0.6rem;
 	border: 0.1rem solid var(--line);
@@ -131,7 +133,13 @@
 	color: var(--text);
 	font: inherit;
 }
-.av-form input[type="email"]:focus { outline: 0; border-color: var(--link); }
+.av-form input[type="email"]:focus,
+.av-form input[type="text"]:focus,
+.av-form textarea:focus { outline: 0; border-color: var(--link); }
+/* withdrawal form (widerrufen.html) */
+.wd-form { margin-top: 1.6rem; }
+.wd-form input, .wd-form textarea { margin-bottom: 1rem; }
+.wd-form button:disabled { opacity: 0.4; }
 .av-check { display: flex !important; gap: 0.6rem; align-items: baseline; margin-bottom: 0.4rem !important; }
 .av-check input { accent-color: #0000ff; }
 

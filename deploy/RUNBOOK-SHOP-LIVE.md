@@ -1,6 +1,6 @@
 # Runbook: Shop auf juliusniemeyer.de live schalten
 
-Stand 13.10.2026, Sitzung „website“. Nur ein Dokument: Nichts davon ist ausgeführt.
+Stand 13.10.2026, Sitzung „website“. Vom Ablauf (Abschnitte 2–4) ist nichts ausgeführt. Die Vorarbeiten im Code (Abschnitt 1) sind lokal committet, nicht gepusht.
 Läuft im gemeinsamen Deploy-Termin **nach SPINE**. Jeder Schritt mit Julius' OK.
 
 Ein Push auf `main` baut die Seite in GitHub Actions und lädt sie per rsync nach `/opt/website/site`.
@@ -11,17 +11,17 @@ Am Server (Caddy, Container) ändert sich für den Shop nichts.
 | # | Was | Wer | Prüfen |
 |---|---|---|---|
 | a | SPINE läuft unter `https://oeuvre.studioniemeyer.de` mit Shop-API | spine | `curl -s https://oeuvre.studioniemeyer.de/api/public/shop/juliusniemeyer \| head -c 300` gibt JSON mit `werke` |
-| b | Kanal `juliusniemeyer` in SPINE: domain `https://juliusniemeyer.de` (CORS und Danke-/Abbruch-URL), cancelPath `/abbruch.html` | spine | `curl -sI -H "Origin: https://juliusniemeyer.de" …/api/public/shop/juliusniemeyer/status` → `access-control-allow-origin: https://juliusniemeyer.de` |
-| c | Werke im Server-SPINE für den Kanal freigegeben. Die **SPINE-Werk-IDs auf dem Server** passen zu `content/available.json` (`id` → `fig`). Sonst lässt der Build das Werk weg („has no fig. number“). | Julius + website | Build-Log: `shop: N works from SPINE`, keine Warnung |
+| b | Kanal `juliusniemeyer` in SPINE **per Hand unter /shop anlegen** (spine `docs/runbook-deploy-shop.md`, Schritt 7): Domain `juliusniemeyer.de` (SPINE speichert nur den Host; CORS für `https://juliusniemeyer.de` und `https://www.juliusniemeyer.de`), successPath `/danke.html?o={orderId}`, cancelPath `/abbruch.html` | spine (mit Julius) | `curl -sI -H "Origin: https://juliusniemeyer.de" …/api/public/shop/juliusniemeyer/status` → `access-control-allow-origin: https://juliusniemeyer.de` |
+| c | Werke im Server-SPINE für den Kanal freigegeben, **mit fig-Nummer** (Feld fig der Freigabe unter /shop → Werke im Shop). Die Server-IDs sind zufällig; der Build ordnet live nur über `fig` zu. Werk ohne fig → ausgelassen mit Warnung. Eine fig ohne Bild in den Werk-Galerien → Build bricht ab. | Julius | Build-Log: `shop: N works from SPINE`, keine Warnung |
 | d | Konto live im **Stripe-Testmodus**, PayPal im Checkout aktiv (Plattform-Konto, Kanal juliusniemeyer) | konto | Testkauf zeigt PayPal |
 | e | Zentrale und Mainframe nehmen `order.paid`, `inquiry.created` und `withdrawal.received` an | crm, mainframe | Nach dem Testkauf Push im Mainframe und Mail |
-| f | Vorarbeiten im Code (Abschnitt 1) sind committet | website | `git log` |
+| f | Vorarbeiten im Code (Abschnitt 1) sind committet | website | erledigt, `npm test` grün |
 
-## 1. Vorarbeiten im Code (lokal, vor dem Termin; noch nicht gebaut)
+## 1. Vorarbeiten im Code (erledigt, lokal committet; Tests: `npm test`, 7 Fälle)
 
 1. **Live-Schalter statt SHOP_PREVIEW.** Heute steuert `SHOP_PREVIEW=1` drei Dinge: die Shop-Seite,
    die Entwürfe der Rechtstexte und den Rückfall auf Beispieldaten, wenn SPINE nicht erreichbar ist. Das darf live nicht sein.
-   Vorschlag: neue Variable `SHOP_LIVE=1`.
+   Gebaut: neue Variable `SHOP_LIVE=1`.
    - `available.html` kommt aus SPINE. Ist SPINE nicht erreichbar oder liefert 0 Werke, **bricht der Build ab**.
      Dann bleibt die alte Seite auf dem Server stehen (rsync läuft nicht). Keine Beispieldaten live.
    - `SHOP_PREVIEW` bleibt nur für die lokale Arbeit.
@@ -34,11 +34,11 @@ Am Server (Caddy, Container) ändert sich für den Shop nichts.
    Damit lässt sich der Shop ohne Code-Commit über Repository-Variablen ein- und ausschalten (siehe Rückweg).
 3. **Rechtstexte:** AGB, Widerruf und Versand haben `entwurf: true` und werden ohne Vorschau nicht gebaut.
    Für den Livegang muss das Flag weg, und zwar erst nach der Prüfung über eRecht24 (offener Punkt 1).
-   Ohne Widerrufsbelehrung und AGB darf der Shop nicht live gehen. Der Build soll mit `SHOP_LIVE=1` abbrechen,
-   solange einer dieser Texte noch Entwurf ist.
+   Ohne Widerrufsbelehrung und AGB darf der Shop nicht live gehen. Der Build bricht mit `SHOP_LIVE=1` ab,
+   solange einer dieser Texte noch `entwurf` hat oder „[OFFEN“ enthält.
 4. **Widerrufsbutton (§ 356a BGB)** wie bei oscar: Seite `widerrufen.html` mit Formular
    (Name, E-Mail, Bestellnummer, Notiz, Honigtopf `website`, Zeitfalle `t`) → `POST <api>/withdrawal`.
-   Ohne SPINE wird eine vorbereitete Mail angeboten. Link im Footer und in der Widerrufsbelehrung. Der SPINE-Endpunkt ist da
+   Ohne SPINE wird eine vorbereitete Mail angeboten. Link „Vertrag widerrufen“ im Footer jeder Seite und in der Widerrufsbelehrung. 202 → Bestätigungssatz; 400/429/Netzfehler → Hinweis mit Mailadresse. Im Browser gegen eine Attrappe geprüft. Der SPINE-Endpunkt ist da
    (f6c1c00, Ereignis `withdrawal.received`).
 5. **Neue Werke in SPINE** erscheinen erst nach einem neuen Build (die Liste ist statisch, nur der Status ist live).
    Vorerst: in GitHub unter Actions → „Build & deploy website“ → *Run workflow*. Später ein `repository_dispatch` aus SPINE.
@@ -84,7 +84,10 @@ Am Server (Caddy, Container) ändert sich für den Shop nichts.
 
 1. **Rechtstexte** AGB, Widerruf und Versand sind Entwürfe. Sie werden über eRecht24 geprüft, und erst danach entfällt `entwurf`.
    Die Datenschutzerklärung braucht Stripe und PayPal.
-2. **Widerrufsbutton (§ 356a)** ist noch nicht eingebaut (Vorarbeit 4). Er ist Pflicht für den Livegang.
+   **Achtung für den Termin:** Mit `SHOP_LIVE=1` baut die Seite erst, wenn die Prüfung durch ist. Ein Test gegen das
+   Server-SPINE von lokal aus geht nicht, weil CORS nur juliusniemeyer.de erlaubt. Ohne geprüfte Texte fällt der Shop-Test im Termin also aus.
+2. **Widerrufsbutton (§ 356a)** ist eingebaut (`widerrufen.html`, Vorarbeit 4). Wortlaut der Seite und den Hinweis darauf
+   in der Widerrufsbelehrung bei der eRecht24-Prüfung mit abgleichen.
 3. **Deep-Link** `available.html#<fig>` statt eigener Werkseiten. Reicht das?
 4. **Testmodus öffentlich?** Steht der Shop live mit Stripe-Testmodus, sehen echte Besucher:innen ihn. Ein echter Kauf
    scheitert dann, oder es entstehen Scheinbestellungen mit Testkarten. Vorschlag: Den Test im Termin mit

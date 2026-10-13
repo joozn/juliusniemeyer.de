@@ -22,12 +22,26 @@ const works = [
 const statement = read('statement.json');
 const cv = read('cv.json');
 // works on offer (shop). Comes from SPINE when SPINE_URL is set (contract: C:\dev\02_apps\mainframe\docs\verkauf.md),
-// otherwise example data. content/available.json also maps SPINE work ids to fig. numbers (images stay on the website).
+// otherwise example data. SPINE sends the fig. number per work; content/available.json maps local example ids to fig. numbers
+// (images stay on the website).
 const KANAL = 'juliusniemeyer';
 const SPINE_URL = (process.env.SPINE_URL || '').replace(/\/$/, '');
 let available = read('available.json');
 // agb, widerruf, versand are drafts (entwurf: true) and only built with SHOP_PREVIEW until they are checked.
 const legal = ['impressum', 'datenschutz', 'agb', 'widerruf', 'versand'].map((n) => ({ name: n, ...read(`legal/${n}.json`) }));
+
+// Shop switches (see deploy/RUNBOOK-SHOP-LIVE.md):
+// - SHOP_PREVIEW=1 (local only): shop with SPINE data or example data, legal drafts included.
+// - SHOP_LIVE=1 (GitHub variable): shop only with data from SPINE and only with checked legal texts – otherwise the build
+//   fails and the page on the server stays as it is (rsync does not run).
+// - neither: "Available" says "coming soon".
+const SHOP_PREVIEW = process.env.SHOP_PREVIEW === '1';
+const SHOP_LIVE = process.env.SHOP_LIVE === '1';
+const SHOP = SHOP_PREVIEW || SHOP_LIVE;
+const fail = (msg) => {
+	console.error(`build stopped: ${msg}`);
+	process.exit(1);
+};
 
 // Date top right = state of the document: day of the last commit (falls back to today).
 const stand = (() => {
@@ -170,14 +184,17 @@ const header = (page) => {
 `;
 };
 
+// electronic withdrawal function (§ 356a BGB) must be easy to find on every page while the shop is on
+const withdrawLink = (sep) => (SHOP ? `${sep} <a href="widerrufen.html">Vertrag widerrufen</a>` : '');
+
 const footer = `<footer class="bar bar--bottom">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-6">${emailLink('Email,')} <a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de,</a> <a href="impressum.html">Impressum,</a> <a href="datenschutz.html">Datenschutz</a></div>
+		<div class="span-6">${emailLink('Email,')} <a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de,</a> <a href="impressum.html">Impressum,</a> <a href="datenschutz.html">Datenschutz</a>${withdrawLink(',')}</div>
 		<div class="span-4">${esc(site.footer_quote)}</div>
 		<div class="span-2 right">${esc(site.footer_credit)}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
-		<div>${emailLink('Email')}</div>
+		<div>${emailLink('Email')}${withdrawLink('')}</div>
 		<nav class="right" aria-label="Works">${worksNav}</nav>
 	</div>
 </footer>
@@ -294,33 +311,45 @@ ${footer}
 `;
 }
 
-// Until the shop runs with real data from SPINE the page says "coming soon".
+// Until the shop runs with real data from SPINE the page says "coming soon" (switches: see SHOP_LIVE above).
 // Work on the shop locally: SHOP_PREVIEW=1 npm run build (never set in GitHub Actions);
-// with SPINE_URL=http://127.0.0.1:3000 as well, the page talks to a local SPINE (Durchstich-Test).
-const SHOP_PREVIEW = process.env.SHOP_PREVIEW === '1';
+// with SPINE_URL=http://127.0.0.1:3001 as well, the page talks to a local SPINE (Durchstich-Test).
+// The list is fixed at build time (only the status is live): new works in SPINE need a new build (GitHub: Run workflow).
+
+// Live only with checked legal texts: no draft flag, no "[OFFEN" left in the text.
+function checkLiveLegal() {
+	const open = legal.filter((p) => p.entwurf || /\[OFFEN/.test(p.body || '')).map((p) => p.name);
+	if (open.length) fail(`SHOP_LIVE=1, but legal texts are still drafts: ${open.join(', ')} (remove "entwurf" after the check)`);
+}
 
 // SPINE sends the current price; the page works with the start price (current = start × 2^sold for capitalistic selling).
 const fromSpine = (w) => (w.capitalistic && w.preis != null ? { ...w, preis: w.preis / 2 ** (w.verkauft || []).length } : w);
 
 async function loadAvailable() {
-	if (!SPINE_URL) return;
+	if (!SPINE_URL) {
+		if (SHOP_LIVE) fail('SHOP_LIVE=1 needs SPINE_URL');
+		return;
+	}
 	const api = `${SPINE_URL}/api/public/shop/${KANAL}`;
 	try {
 		const res = await fetch(api, { signal: AbortSignal.timeout(15000) });
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const data = await res.json();
-		const local = Object.fromEntries(available.werke.map((w) => [w.id, w]));
+		// SPINE sends fig (entered when the work is released for the shop); the local ids only fit the example data
+		const local = SHOP_LIVE ? {} : Object.fromEntries(available.werke.map((w) => [w.id, w]));
 		const werke = data.werke
 			.map((w) => fromSpine({ verkauft: [], reserviert: [], ...w, fig: w.fig || local[w.id]?.fig }))
 			.filter((w) => {
-				if (!w.fig) console.warn(`  SPINE work ${w.id} has no fig. number in content/available.json – skipped`);
+				if (!w.fig) console.warn(`  SPINE work ${w.id} has no fig. number (enter it in SPINE under /shop) – skipped`);
 				return w.fig;
 			});
 		available = { versand: data.versand, rahmen: data.rahmen, werke, api };
 		console.log(`  shop: ${werke.length} works from SPINE`);
 	} catch (err) {
+		if (SHOP_LIVE) fail(`SPINE not reachable (${err.message}) – no example data on the live site`);
 		console.warn(`  shop: SPINE not reachable (${err.message}) – example data`);
 	}
+	if (SHOP_LIVE && !available.werke.length) fail('SPINE sent no works with a fig. number');
 }
 
 function comingSoonPage() {
@@ -486,27 +515,67 @@ ${footer}
 `;
 }
 
+// Electronic withdrawal function (§ 356a BGB): POST <api>/withdrawal → 202, SPINE sends withdrawal.received and the
+// Zentrale confirms receipt by email. Without SPINE (local) a prepared email opens instead.
+function withdrawPage() {
+	const cfg = { endpoint: available.api ? `${available.api}/withdrawal` : '', u: mailUser, d: mailDomain };
+	return `${head({ title: 'Vertrag widerrufen - Julius Niemeyer', description: 'Vertrag widerrufen', lang: 'de', robots: 'noindex, follow', extra: '	<link rel="stylesheet" href="assets/available.css">\n' })}
+${header('legal')}
+<main id="top">
+	<section class="intro cols legal-page">
+		<h1 class="span-8">Vertrag widerrufen</h1>
+		<div class="span-4">
+			<p>Hier können Sie einen Kauf innerhalb der Widerrufsfrist widerrufen. Einzelheiten stehen in der <a href="widerruf.html">Widerrufsbelehrung</a>. Den Eingang bestätigen wir Ihnen unverzüglich per E-Mail.</p>
+			<form class="av-form wd-form" data-wd>
+				<label for="wd-name">Name</label>
+				<input id="wd-name" name="name" type="text" required maxlength="200" autocomplete="name">
+				<label for="wd-mail">E-Mail-Adresse</label>
+				<input id="wd-mail" name="email" type="email" required maxlength="200" autocomplete="email">
+				<label for="wd-order">Bestellnummer oder Arbeit</label>
+				<input id="wd-order" name="order" type="text" required maxlength="200" placeholder="z. B. ord_… oder Titel der Arbeit">
+				<label for="wd-note">Nachricht (optional)</label>
+				<textarea id="wd-note" name="note" rows="3" maxlength="2000"></textarea>
+				<input class="av-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+				<p class="av-actions"><button type="submit" class="av-primary">Widerruf bestätigen</button></p>
+				<p class="wd-msg" role="status"></p>
+			</form>
+		</div>
+	</section>
+</main>
+
+${footer}
+<script type="application/json" id="wd-data">${JSON.stringify(cfg).replace(/</g, '\\u003c')}</script>
+<script src="assets/main.js" defer></script>
+<script src="assets/widerrufen.js" defer></script>
+</body>
+</html>
+`;
+}
+
 /* ---------- build ---------- */
 
 (async () => {
 	const t = Date.now();
+	// checks first, so a stopped live build fails fast and writes nothing
+	if (SHOP_LIVE) checkLiveLegal();
+	await loadAvailable();
 	fs.mkdirSync(OUT, { recursive: true });
 	for (const f of ['assets', 'admin', 'favicon.ico', 'favicon.svg', 'og-image.jpg', 'CNAME']) {
 		if (fs.existsSync(f)) fs.cpSync(f, path.join(OUT, f), { recursive: true });
 	}
 	const img = await processImages();
-	await loadAvailable();
 	assignFigs();
 	fs.writeFileSync(path.join(OUT, 'index.html'), indexPage(img));
-	fs.writeFileSync(path.join(OUT, 'available.html'), SHOP_PREVIEW ? availablePage(img) : comingSoonPage());
+	fs.writeFileSync(path.join(OUT, 'available.html'), SHOP ? availablePage(img) : comingSoonPage());
 	// Always built (noindex): Stripe test payments redirect here even while Available shows "Coming soon".
 	fs.writeFileSync(path.join(OUT, 'danke.html'), thanksPage());
 	fs.writeFileSync(path.join(OUT, 'abbruch.html'), cancelPage());
-	if (SHOP_PREVIEW) {
-		console.log(`  shop preview: available.html with ${available.api ? 'SPINE data' : 'example data'}`);
+	if (SHOP) {
+		fs.writeFileSync(path.join(OUT, 'widerrufen.html'), withdrawPage());
+		console.log(`  shop ${SHOP_LIVE ? 'live' : 'preview'}: available.html with ${available.api ? 'SPINE data' : 'example data'}`);
 	}
-	const pages = legal.filter((p) => SHOP_PREVIEW || !p.entwurf);
+	const pages = legal.filter((p) => SHOP || !p.entwurf);
 	pages.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-	console.log(`built ${img.size} images, ${4 + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
+	console.log(`built ${img.size} images, ${4 + (SHOP ? 1 : 0) + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
 })();

@@ -4,6 +4,7 @@
   "description": "Website of Julius Niemeyer — static site with Sveltia CMS",
   "scripts": {
     "build": "node build.js",
+    "test": "node --test test/build.test.js",
     "serve": "http-server _site -p 4173 -a 127.0.0.1 -c-1",
     "start": "node build.js && http-server _site -p 4173 -a 127.0.0.1 -c-1"
   },

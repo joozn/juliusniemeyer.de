@@ -25,7 +25,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Shop: repository variables SHOP_LIVE=1 and SPINE_URL (deploy/RUNBOOK-SHOP-LIVE.md). Empty = "coming soon".
+      # With SHOP_LIVE=1 the build fails if SPINE is unreachable or legal texts are drafts – then nothing is uploaded.
       - run: npm run build
+        env:
+          SHOP_LIVE: ${{ vars.SHOP_LIVE }}
+          SPINE_URL: ${{ vars.SPINE_URL }}
 
       - name: Upload to server
         if: vars.DEPLOY_HOST != ''
