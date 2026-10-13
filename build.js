@@ -351,6 +351,14 @@ function availablePage(img) {
 	const euro = (n) => `${n.toLocaleString('en-GB')} €`;
 	const price = (w) => (w.capitalistic ? w.preis * 2 ** w.verkauft.length : w.preis);
 
+	// deep link available.html#<fig>; variants sharing a fig (e.g. A2 and A3 of one poster) get #<fig>-2, -3 …
+	const ids = new Set();
+	const anchor = (fig) => {
+		let id = fig;
+		for (let n = 2; ids.has(id); n++) id = `${fig}-${n}`;
+		ids.add(id);
+		return id;
+	};
 	const item = (w) => {
 		const im = byFig[w.fig];
 		if (!im) throw new Error(`available.json: no image for fig. ${w.fig}`);
@@ -359,7 +367,7 @@ function availablePage(img) {
 		const status = w.status === 'sold' ? 'sold' : w.status === 'reserved' ? 'reserved' : '';
 		if (w.art === 'unikat' && w.modus === 'kauf' && w.preis != null) {
 			// unique work that can be bought directly (SHOP.md, e.g. the Voids); available.js renders delivery and live status
-			return `		<article class="av-item av-unikat av-direct" id="${esc(w.fig)}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+			return `		<article class="av-item av-unikat av-direct" id="${esc(anchor(w.fig))}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
 			<p class="av-price">unique work · ${status || `<b>${euro(w.preis)}</b>`}</p>
 			${w.gerahmt ? '<p class="av-frame-incl">framed · frame included</p>' : ''}
 			<p class="av-ship"></p>
@@ -368,7 +376,7 @@ function availablePage(img) {
 			<p class="av-ask-first"${status === 'sold' ? ' hidden' : ''}><button type="button" class="av-link av-ask-link">or ask first</button></p></div></article>`;
 		}
 		if (w.art === 'unikat') {
-			return `		<article class="av-item av-unikat" id="${esc(w.fig)}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+			return `		<article class="av-item av-unikat" id="${esc(anchor(w.fig))}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
 			<p class="av-price">unique work · ${status || 'price on request'}</p>
 			${w.gerahmt ? '<p class="av-frame-incl">framed · frame included</p>' : ''}
 			<noscript><p>Requests need JavaScript — or write an email.</p></noscript>
@@ -378,7 +386,7 @@ function availablePage(img) {
 		const soldOut = w.verkauft.length >= w.auflage;
 		const free = w.auflage - w.verkauft.length - w.reserviert.length;
 		const line = `edition of ${w.auflage} + ${w.ap ?? 1} AP · ${soldOut ? 'sold out' : `${free} available · ${euro(price(w))}`}`;
-		return `		<article class="av-item av-edition" id="${esc(w.fig)}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+		return `		<article class="av-item av-edition" id="${esc(anchor(w.fig))}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
 			<p class="av-price">${line}</p>
 			<p class="av-cap"${w.capitalistic ? '' : ' hidden'}>capitalistic selling — the price doubles with every copy sold</p>
 			<p class="av-label">choose your number</p>
@@ -390,6 +398,15 @@ function availablePage(img) {
 	};
 	const editions = available.werke.filter((w) => w.art === 'edition');
 	const unikate = available.werke.filter((w) => w.art === 'unikat');
+	const uniqueSection = `	<section class="intro cols">
+		<h1 class="span-8">Unique works</h1>
+		<div class="span-4"><p>Request one or several works. You get a dossier per work by email; Julius gets in touch personally. Works with a price can also be bought directly, frame included.</p></div>
+	</section>
+
+	<div class="av-list">
+${unikate.map(item).join('\n')}
+	</div>
+`;
 
 	return `${head({ title: 'Available - Julius Niemeyer', description: 'Works and editions by Julius Niemeyer currently available.', robots: 'noindex, follow', extra: '	<link rel="stylesheet" href="assets/available.css">\n' })}
 ${header('available')}
@@ -409,15 +426,7 @@ ${header('available')}
 ${editions.map(item).join('\n')}
 	</div>
 
-	<section class="intro cols">
-		<h1 class="span-8">Unique works</h1>
-		<div class="span-4"><p>Request one or several works. You get a dossier per work by email; Julius gets in touch personally. Works with a price can also be bought directly, frame included.</p></div>
-	</section>
-
-	<div class="av-list">
-${unikate.map(item).join('\n')}
-	</div>
-
+${unikate.length ? uniqueSection : ''}
 </main>
 
 ${footer}
