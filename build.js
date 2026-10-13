@@ -21,7 +21,7 @@ const works = [
 ].map((w) => ({ ...w, ...read(w.file) }));
 const statement = read('statement.json');
 const cv = read('cv.json');
-// works on offer (shop). Comes from SPINE when SPINE_URL is set (contract: C:\dev_apps\mainframe\docserkauf.md),
+// works on offer (shop). Comes from SPINE when SPINE_URL is set (contract: C:\dev\02_apps\mainframe\docs\verkauf.md),
 // otherwise example data. content/available.json also maps SPINE work ids to fig. numbers (images stay on the website).
 const KANAL = 'juliusniemeyer';
 const SPINE_URL = (process.env.SPINE_URL || '').replace(/\/$/, '');
