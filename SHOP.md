@@ -89,7 +89,11 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
    - Danke-Seite `danke.html?o=<orderId>` (= `successUrl`), `cancelUrl` = `https://juliusniemeyer.de/available.html`.
    - Was SPINE dafür zusätzlich braucht: **CORS** für `https://juliusniemeyer.de` auf `…/status`, `…/checkout`,
      `…/inquiry` (Browser ruft SPINE direkt auf); `…/status` als Liste `[{id, status, verkauft, reserviert, preis}]`.
-   - Noch nicht gebaut: Unikat mit `modus: kauf` (wird vorerst als „auf Anfrage“ gezeigt).
+   - **Unikat mit `modus: kauf`** (13.10.2026): Preis inkl. Rahmen, Lieferart wählbar, „Buy“ → `POST …/checkout {work, delivery}`,
+     daneben „or ask first“. Live-Status für Unikate (SPINE: `verkauft`/`reserviert` als boolean) zeigt „sold“/„reserved“.
+   - **Deep-Link je Werk** (13.10.2026, Vorschlag statt eigener Werkseiten): `available.html#<fig>`, z. B. `#TOK-23.01`.
+   - **Abbruchseite** `abbruch.html` (immer gebaut, noindex). In SPINE den `cancelPath` des Kanals auf `/abbruch.html` stellen.
+     `danke.html` erwähnt SEPA (Zahlung dauert Tage, Werk bleibt reserviert).
    - Test lokal: `SHOP_PREVIEW=1 SPINE_URL=http://127.0.0.1:3000 npm start`.
    - `fig` darf SPINE je Werk mitschicken (Julius, 12.10.2026; zuerst im Vertrag ergänzen).
    - **Rechtstexte als Entwurf** (12.10.2026): `content/legal/agb.json`, `widerruf.json`, `versand.json` (`entwurf: true`,

@@ -356,19 +356,29 @@ function availablePage(img) {
 		if (!im) throw new Error(`available.json: no image for fig. ${w.fig}`);
 		const fig = `<figure data-fig="${esc(w.fig)}"${im.light ? ' class="on-light"' : ''}><img src="${im.small}" data-full="${im.big}" width="${im.width}" height="${im.height}" alt="${esc(w.titel)}" loading="lazy" decoding="async"></figure>`;
 		const meta = `<p class="av-title">${esc(w.titel)} (${w.jahr})</p><p>${esc(w.technik)}<br>${esc(w.masse)}</p>`;
+		const status = w.status === 'sold' ? 'sold' : w.status === 'reserved' ? 'reserved' : '';
+		if (w.art === 'unikat' && w.modus === 'kauf' && w.preis != null) {
+			// unique work that can be bought directly (SHOP.md, e.g. the Voids); available.js renders delivery and live status
+			return `		<article class="av-item av-unikat av-direct" id="${esc(w.fig)}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+			<p class="av-price">unique work · ${status || `<b>${euro(w.preis)}</b>`}</p>
+			${w.gerahmt ? '<p class="av-frame-incl">framed · frame included</p>' : ''}
+			<p class="av-ship"></p>
+			<noscript><p>Buying needs JavaScript — or write an email.</p></noscript>
+			<p><button type="button" class="av-buy"${status ? ' hidden' : ''}>Buy — ${euro(w.preis)}</button></p>
+			<p class="av-ask-first"${status === 'sold' ? ' hidden' : ''}><button type="button" class="av-link av-ask-link">or ask first</button></p></div></article>`;
+		}
 		if (w.art === 'unikat') {
-			if (w.modus === 'kauf') console.warn(`  ${w.id}: unique work with modus "kauf" is shown as "on request" (not built yet)`);
-			return `		<article class="av-item av-unikat" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
-			<p class="av-price">unique work · price on request</p>
+			return `		<article class="av-item av-unikat" id="${esc(w.fig)}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+			<p class="av-price">unique work · ${status || 'price on request'}</p>
 			${w.gerahmt ? '<p class="av-frame-incl">framed · frame included</p>' : ''}
 			<noscript><p>Requests need JavaScript — or write an email.</p></noscript>
-			<p><button type="button" class="av-ask">Request</button></p></div></article>`;
+			<p><button type="button" class="av-ask"${status === 'sold' ? ' hidden' : ''}>Request</button></p></div></article>`;
 		}
 		// static price line for visitors without JavaScript; available.js renders the live version
 		const soldOut = w.verkauft.length >= w.auflage;
 		const free = w.auflage - w.verkauft.length - w.reserviert.length;
 		const line = `edition of ${w.auflage} + ${w.ap ?? 1} AP · ${soldOut ? 'sold out' : `${free} available · ${euro(price(w))}`}`;
-		return `		<article class="av-item av-edition" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
+		return `		<article class="av-item av-edition" id="${esc(w.fig)}" data-id="${esc(w.id)}">${fig}<div class="av-info">${meta}
 			<p class="av-price">${line}</p>
 			<p class="av-cap"${w.capitalistic ? '' : ' hidden'}>capitalistic selling — the price doubles with every copy sold</p>
 			<p class="av-label">choose your number</p>
@@ -389,7 +399,7 @@ ${header('available')}
 		<h1 class="span-8">Available</h1>
 		<div class="span-4">
 			<p>Works currently available. <em>Editions</em> can be bought directly within the EU — choose the number you want.
-			<em>Unique works</em> on request: you receive a PDF dossier for each work by email. Shipping outside the EU on request.</p>
+			<em>Unique works</em> mostly on request — you receive a PDF dossier for each work by email; some can be bought directly. Shipping outside the EU on request.</p>
 			<p class="av-note">Prices incl. VAT, plus shipping. In Munich: delivery or pickup by appointment.
 			<a href="agb.html">Terms (AGB)</a>, <a href="widerruf.html">right of withdrawal</a>, <a href="versand.html">shipping</a>.${available.api ? '' : ' Prototype with example data — nothing is sold here.'}</p>
 		</div>
@@ -401,7 +411,7 @@ ${editions.map(item).join('\n')}
 
 	<section class="intro cols">
 		<h1 class="span-8">Unique works</h1>
-		<div class="span-4"><p>Request one or several works. You get a dossier per work by email; Julius gets in touch personally.</p></div>
+		<div class="span-4"><p>Request one or several works. You get a dossier per work by email; Julius gets in touch personally. Works with a price can also be bought directly, frame included.</p></div>
 	</section>
 
 	<div class="av-list">
@@ -429,7 +439,8 @@ ${header('available')}
 	<section class="intro cols legal-page">
 		<h1 class="span-8">Thank you</h1>
 		<div class="span-4">
-			<p>Your payment went through. You will receive an order confirmation by email.</p>
+			<p>Your order has been received. You will receive an order confirmation by email.</p>
+			<p>Paid by SEPA direct debit? The bank transfer takes a few days; the work stays reserved for you until then and is shipped once the payment has arrived.</p>
 			<p class="av-order" hidden>Order number: <span></span></p>
 			<p>Julius gets in touch about delivery or pickup. Questions: ${emailLink('write an email')}.</p>
 			<p><a href="available.html">Back to Available</a></p>
@@ -439,6 +450,27 @@ ${header('available')}
 
 ${footer}
 <script>(() => { const o = new URLSearchParams(location.search).get('o'); const p = document.querySelector('.av-order'); if (o && /^[A-Za-z0-9_-]{1,64}$/.test(o)) { p.querySelector('span').textContent = o; p.hidden = false; } })();</script>
+<script src="assets/main.js" defer></script>
+</body>
+</html>
+`;
+}
+
+// Stripe sends buyers back here when they leave the checkout without paying (cancelUrl of the SPINE channel: /abbruch.html)
+function cancelPage() {
+	return `${head({ title: 'Payment cancelled - Julius Niemeyer', description: 'The payment was cancelled.', robots: 'noindex, nofollow' })}
+${header('available')}
+<main id="top">
+	<section class="intro cols legal-page">
+		<h1 class="span-8">Payment cancelled</h1>
+		<div class="span-4">
+			<p>Nothing has been charged. The work or edition number you chose becomes available again after 30 minutes at the latest.</p>
+			<p>Changed your mind, or something did not work? <a href="available.html">Back to Available</a> — or ${emailLink('write an email')}.</p>
+		</div>
+	</section>
+</main>
+
+${footer}
 <script src="assets/main.js" defer></script>
 </body>
 </html>
@@ -460,11 +492,12 @@ ${footer}
 	fs.writeFileSync(path.join(OUT, 'available.html'), SHOP_PREVIEW ? availablePage(img) : comingSoonPage());
 	// Always built (noindex): Stripe test payments redirect here even while Available shows "Coming soon".
 	fs.writeFileSync(path.join(OUT, 'danke.html'), thanksPage());
+	fs.writeFileSync(path.join(OUT, 'abbruch.html'), cancelPage());
 	if (SHOP_PREVIEW) {
 		console.log(`  shop preview: available.html with ${available.api ? 'SPINE data' : 'example data'}`);
 	}
 	const pages = legal.filter((p) => SHOP_PREVIEW || !p.entwurf);
 	pages.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-	console.log(`built ${img.size} images, ${3 + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
+	console.log(`built ${img.size} images, ${4 + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
 })();

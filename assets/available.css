@@ -155,7 +155,8 @@
 /* without JavaScript nothing can be chosen or bought; the noscript line explains */
 html:not(.js) .av-label,
 html:not(.js) .av-buy,
-html:not(.js) .av-ask { display: none; }
+html:not(.js) .av-ask,
+html:not(.js) .av-ask-first { display: none; }
 .av-ship { margin: 0 0 0.8rem; }
 .av-ship .av-label { display: block; margin-bottom: 0.3rem; }
 .av-ship .av-check { margin-bottom: 0.15rem !important; }
@@ -173,3 +174,8 @@ html:not(.js) .av-ask { display: none; }
 .av-error {
 	color: #ff6b4a;
 }
+
+/* unique work that can be bought directly: "or ask first" below the buy button */
+.av-ask-first { margin-top: -0.2rem !important; }
+/* deep link to a work (available.html#<fig>) lands below the top bar, with room for the fig. label */
+.av-item { scroll-margin-top: calc(var(--bar-h) + 2.5rem); }

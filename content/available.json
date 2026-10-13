@@ -195,6 +195,11 @@
 			"technik": "mdf, lacquer",
 			"masse": "Ø 40 cm",
 			"art": "unikat",
+			"modus": "kauf",
+			"status": "available",
+			"preis": 1800,
+			"versand": "gerahmt-klein",
+			"ust": 7,
 			"gerahmt": true
 		}
 	],
