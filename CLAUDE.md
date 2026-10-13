@@ -35,6 +35,8 @@ Alle fünf Laborelemente sind live in `assets/labor.js` und entschieden. Testpul
 `npm run build && node design/elemente/build.js`, dann `node design/konfigurator/server.js` → http://127.0.0.1:4174/elemente.html
 Seite „Available“ zeigt live „Coming soon“; der Shop mit Beispieldaten nur lokal: `SHOP_PREVIEW=1 npm run build`.
 Shop: entschieden und geplant in **`SHOP.md`** (Website + SPINE + Konto + Zentrale + Kontor + Mainframe).
+Livegang: **`deploy/RUNBOOK-SHOP-LIVE.md`**. Live schaltet die GitHub-Variable `SHOP_LIVE=1` (mit `SPINE_URL`); der Build bricht ab,
+wenn SPINE fehlt oder Rechtstexte noch Entwurf sind. Tests: `npm test`. Shop-Arbeit liegt im Zweig `shop-vorbereitung`, bis Julius den Push nach main freigibt.
 
 ## Design-Prototypen (erledigt)
 
