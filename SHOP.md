@@ -1,14 +1,14 @@
 # Shop – Entscheidungen und Plan
 
 Mit Julius entschieden am 12.10.2026. Gilt für juliusniemeyer.de und nach demselben Prinzip für OSCAR.
-Architektur-Grundlage: Abschnitte „Architektur“ in `C:\dev\mainframe\CLAUDE.md`, `C:\dev\02_apps\konto\CLAUDE.md`,
+Architektur-Grundlage: Abschnitte „Architektur“ in `C:\dev\02_apps\mainframe\CLAUDE.md`, `C:\dev\02_apps\konto\CLAUDE.md`,
 `C:\dev\02_apps\crm\CLAUDE.md`. Stripe läuft im Testmodus (`sk_test_…`), bis Julius live schaltet.
 **Stripe Connect** (entschieden 12.10.2026): Kunstverkauf als verbundenes Konto unter der Konto-Plattform.
 
-Schnittstellen zwischen den Apps (wer speichert was, wer schickt wem was): **`C:\dev\mainframe\docserkauf.md`**.
+Schnittstellen zwischen den Apps (wer speichert was, wer schickt wem was): **`C:\dev\02_apps\mainframe\docs\verkauf.md`**.
 Nachtrag 2026-10-12 (Julius): Ein Unikat kann pro Werk trotzdem **direkt kaufbar** sein (`modus: kauf`, z. B. die Voids bei OSCAR).
 
-**Schnittstellen-Vertrag** (wer speichert was, Endpunkte, Ereignisse, Reihenfolge): `C:\dev\mainframe\docserkauf.md`.
+**Schnittstellen-Vertrag** (wer speichert was, Endpunkte, Ereignisse, Reihenfolge): `C:\dev\02_apps\mainframe\docs\verkauf.md`.
 Dort zuerst ändern, dann in den Apps.
 
 ## Grundsatz
@@ -22,7 +22,7 @@ Kein eigenes Shopsystem. Die vorhandenen Apps werden verbunden, jede behält ihr
 | **Konto** (`C:\dev\02_apps\konto`) | einziger Dienst, der mit Stripe spricht; braucht dafür Einmalzahlungen (bisher nur Abos) |
 | **Zentrale** (`C:\dev\02_apps\crm`) | Käufer und Anfragende als Kontakte; verschickt alle Mails (Bestätigung, Dossiers) |
 | **Kontor** (`C:\dev\02_apps\kontor`) | Rechnung zu jedem Verkauf; später automatische USt-Abführung |
-| **Mainframe** (`C:\dev\mainframe`) | Handlungsnachricht bei jedem Verkauf und jeder Anfrage |
+| **Mainframe** (`C:\dev\02_apps\mainframe`) | Handlungsnachricht bei jedem Verkauf und jeder Anfrage |
 
 ## Entscheidungen
 
