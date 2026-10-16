@@ -1,6 +1,6 @@
 # Runbook: Shop auf juliusniemeyer.de live schalten
 
-Stand 13.10.2026, Sitzung „website“. Vom Ablauf (Abschnitte 2–4) ist nichts ausgeführt. Die Vorarbeiten im Code (Abschnitt 1) sind lokal committet, nicht gepusht.
+Stand 13.10.2026, Sitzung „website“ (16.10.: Vorarbeiten aus Abschnitt 1 sind seit 15.10. auf main und deployt, Shop bleibt bis SHOP_LIVE aus). Vom Ablauf (Abschnitte 2–4) ist nichts ausgeführt.
 Läuft im gemeinsamen Deploy-Termin **nach SPINE**. Jeder Schritt mit Julius' OK.
 
 Ein Push auf `main` baut die Seite in GitHub Actions und lädt sie per rsync nach `/opt/website/site`.
