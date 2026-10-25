@@ -1,156 +1,188 @@
 {
   "title": "Installation",
+  "title_de": "Installation",
   "intro": "*Installations* for Julius Niemeyer articulate a research-driven artistic practice grounded in the analysis of systems, networks, and processual structures. His work employs scientific terminology to describe phenomena such as entropy, decay, vectorial relations, and dynamic equilibria as operative principles within contemporary socio-technical environments. Rather than treating these concepts metaphorically, his installations translate them into spatial, material, and temporal configurations.\n\nThrough complex, site-specific installations integrating digital fabrication, interactive technologies, and sculptural methodologies, Niemeyer constructs experimentally structured environments. These function as analytical fields in which relational patterns, systemic dependencies, and transformational processes are examined. His practice positions art as an epistemic tool—methodologically exploratory and iterative—capable of generating knowledge beyond conventional disciplinary boundaries.",
+  "intro_de": "*Installationen* von Julius Niemeyer artikulieren eine forschungsgeleitete künstlerische Praxis, die auf der Analyse von Systemen, Netzwerken und prozessualen Strukturen beruht. Seine Arbeit verwendet wissenschaftliche Begriffe, um Phänomene wie Entropie, Zerfall, vektorielle Beziehungen und dynamische Gleichgewichte als wirksame Prinzipien in zeitgenössischen sozio-technischen Umgebungen zu beschreiben. Statt diese Konzepte metaphorisch zu behandeln, übersetzen seine Installationen sie in räumliche, materielle und zeitliche Konfigurationen.\n\nDurch komplexe, ortsspezifische Installationen, die digitale Fabrikation, interaktive Technologien und bildhauerische Methoden verbinden, konstruiert Niemeyer experimentell strukturierte Umgebungen. Sie fungieren als analytische Felder, in denen Beziehungsmuster, systemische Abhängigkeiten und Transformationsprozesse untersucht werden. Seine Praxis versteht Kunst als epistemisches Werkzeug – methodisch explorativ und iterativ –, das Wissen jenseits herkömmlicher Disziplingrenzen hervorbringen kann.",
   "images": [
     {
       "image": "/images/installation-01-ds105411.webp",
       "fig": "SKI-26.01",
-      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nTwo *Phantoms* from *Skia*, suspended and installed at Art Biesenthal — faceted acrylic bodies that hang, wait, and move."
+      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nTwo *Phantoms* from *Skia*, suspended and installed at Art Biesenthal — faceted acrylic bodies that hang, wait, and move.",
+      "caption_de": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nZwei *Phantome* aus *Skia*, aufgehängt und installiert bei Art Biesenthal – facettierte Acrylkörper, die hängen, warten und sich bewegen."
     },
     {
       "image": "/images/installation-02-ds105436.webp",
       "fig": "SKI-26.02",
-      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nEach unit tracks the presence of visitors by radar and answers with vertical motion: drawing back when approached, rising to explore when watched."
+      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nEach unit tracks the presence of visitors by radar and answers with vertical motion: drawing back when approached, rising to explore when watched.",
+      "caption_de": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nJede Einheit erfasst die Anwesenheit der Besucher*innen per Radar und antwortet mit vertikaler Bewegung: Sie weicht zurück, wenn man sich nähert, und steigt auf, um zu erkunden, wenn sie beobachtet wird."
     },
     {
       "image": "/images/installation-03-ds105430.webp",
       "fig": "SKI-26.03",
-      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nSeen here in the space, the shadows they cast are never fixed — they shift with whoever stands beneath them."
+      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nSeen here in the space, the shadows they cast are never fixed — they shift with whoever stands beneath them.",
+      "caption_de": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\nHier im Raum zu sehen: Die Schatten, die sie werfen, sind nie fest – sie verschieben sich mit jedem, der darunter steht."
     },
     {
       "image": "/images/installation-04-ds105472.webp",
       "fig": "SKI-26.04",
-      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\n*Skia* draws on Plato&#x27;s allegory of the cave and the observer effect in quantum physics: the idea that nothing can be watched without being changed by the watching.\n\nThe phantoms make this tangible — they never simply exist for the viewer, but exist *because* of them, shifting and reacting so that presence itself becomes the material the work is made of."
+      "caption": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\n*Skia* draws on Plato&#x27;s allegory of the cave and the observer effect in quantum physics: the idea that nothing can be watched without being changed by the watching.\n\nThe phantoms make this tangible — they never simply exist for the viewer, but exist *because* of them, shifting and reacting so that presence itself becomes the material the work is made of.",
+      "caption_de": "“skia” (2026) / Sound Biesenthal 2026 / Foto: Julius Niemeyer\n\n*Skia* greift Platons Höhlengleichnis und den Beobachtereffekt der Quantenphysik auf: die Vorstellung, dass sich nichts beobachten lässt, ohne durch das Beobachten verändert zu werden.\n\nDie Phantome machen das greifbar – sie existieren nie einfach für das Gegenüber, sondern *wegen* dessen, verschieben sich und reagieren, sodass Anwesenheit selbst zum Material der Arbeit wird."
     },
     {
       "image": "/images/installation-05-testing-facility-nebyula-rosastern-01-12.webp",
       "fig": "CSD-25.01",
-      "caption": "“chronos - state of decay” (2025) / main body / Foto: Dirk Tacke"
+      "caption": "“chronos - state of decay” (2025) / main body / Foto: Dirk Tacke",
+      "caption_de": "“chronos - state of decay” (2025) / Hauptkörper / Foto: Dirk Tacke"
     },
     {
       "image": "/images/installation-06-testing-facility-nebyula-rosastern-01-12.webp",
       "fig": "CSD-25.02",
-      "caption": "“chronos - state of decay” (2025) / geiger counters\n\n/ Foto: Dirk Tacke"
+      "caption": "“chronos - state of decay” (2025) / geiger counters\n\n/ Foto: Dirk Tacke",
+      "caption_de": "“chronos - state of decay” (2025) / Geigerzähler\n\n/ Foto: Dirk Tacke"
     },
     {
       "image": "/images/installation-07-testing-facility-nebyula-rosastern-01-12.webp",
       "fig": "CSD-25.03",
-      "caption": "“chronos - state of decay” (2025) / installation view\n\n/ Foto: Dirk Tacke"
+      "caption": "“chronos - state of decay” (2025) / installation view\n\n/ Foto: Dirk Tacke",
+      "caption_de": "“chronos - state of decay” (2025) / Installationsansicht\n\n/ Foto: Dirk Tacke"
     },
     {
       "image": "/images/installation-08-ds1z-quickprint1.webp",
       "fig": "CSD-25.04",
-      "caption": "“chronos - state of decay” (2025) / decayimpulse / Foto: JN"
+      "caption": "“chronos - state of decay” (2025) / decayimpulse / Foto: JN",
+      "caption_de": "“chronos - state of decay” (2025) / decayimpulse / Foto: JN"
     },
     {
       "image": "/images/installation-09-testing-facility-nebyula-rosastern-01-12.webp",
       "fig": "CSD-25.05",
-      "caption": "“chronos - state of decay” (2025) / main body _ decay state / Foto: Dirk Tacke"
+      "caption": "“chronos - state of decay” (2025) / main body _ decay state / Foto: Dirk Tacke",
+      "caption_de": "“chronos - state of decay” (2025) / Hauptkörper _ Zerfallszustand / Foto: Dirk Tacke"
     },
     {
       "image": "/images/installation-10-theresamariaforthaus-56684.webp",
       "fig": "THY-25.01",
-      "caption": "“thymia” (2025) - Installation @Science Week Berlin 2025 next to a work by Andreas Greiner"
+      "caption": "“thymia” (2025) - Installation @Science Week Berlin 2025 next to a work by Andreas Greiner",
+      "caption_de": "“thymia” (2025) - Installation @Science Week Berlin 2025 neben einer Arbeit von Andreas Greiner"
     },
     {
       "image": "/images/installation-11-theresamariaforthaus-56720.webp",
       "fig": "THY-25.02",
-      "caption": "“thymia” (2025) - Claudio Flores Founder of Mimotype introducing Scarlet-M into thymia"
+      "caption": "“thymia” (2025) - Claudio Flores Founder of Mimotype introducing Scarlet-M into thymia",
+      "caption_de": "“thymia” (2025) - Claudio Flores, Gründer von Mimotype, bringt Scarlet-M in thymia ein"
     },
     {
       "image": "/images/installation-12-theresamariaforthaus-56892.webp",
       "fig": "THY-25.03",
-      "caption": "“thymia” (2025) - View into the installation"
+      "caption": "“thymia” (2025) - View into the installation",
+      "caption_de": "“thymia” (2025) - Blick in die Installation"
     },
     {
       "image": "/images/installation-13-theresamariaforthaus-56702.webp",
       "fig": "THY-25.04",
-      "caption": "“thymia” (2025) - resin print of thymia"
+      "caption": "“thymia” (2025) - resin print of thymia",
+      "caption_de": "“thymia” (2025) - Harzdruck von thymia"
     },
     {
       "image": "/images/installation-14-mimotype04.webp",
       "fig": "THY-25.05",
-      "caption": "“thymia” (2025) - Protein by Mimotype in the lab"
+      "caption": "“thymia” (2025) - Protein by Mimotype in the lab",
+      "caption_de": "“thymia” (2025) - Protein von Mimotype im Labor"
     },
     {
       "image": "/images/installation-15-screenshot-2025-11-04-062721.webp",
       "fig": "THY-25.06",
-      "caption": "“thymia” (2025) - Volumetric cloud simulation converted from voxels to 3d volume"
+      "caption": "“thymia” (2025) - Volumetric cloud simulation converted from voxels to 3d volume",
+      "caption_de": "“thymia” (2025) - Volumetrische Wolkensimulation, von Voxeln in ein 3D-Volumen umgerechnet"
     },
     {
       "image": "/images/installation-16-theresamariaforthaus-56709.webp",
       "fig": "THY-25.07",
-      "caption": "“thymia” (2025) - View into the UV-chamber"
+      "caption": "“thymia” (2025) - View into the UV-chamber",
+      "caption_de": "“thymia” (2025) - Blick in die UV-Kammer"
     },
     {
       "image": "/images/installation-17-screenshot-2025-11-04-062818.webp",
       "fig": "THY-25.08",
-      "caption": "“thymia” (2025) - Volumetric cloud simulation converted from voxels to 3d volume"
+      "caption": "“thymia” (2025) - Volumetric cloud simulation converted from voxels to 3d volume",
+      "caption_de": "“thymia” (2025) - Volumetrische Wolkensimulation, von Voxeln in ein 3D-Volumen umgerechnet"
     },
     {
       "image": "/images/installation-18-theresamariaforthaus-56659.webp",
       "fig": "THY-25.09",
-      "caption": "“thymia” (2025) - Installation View"
+      "caption": "“thymia” (2025) - Installation View",
+      "caption_de": "“thymia” (2025) - Installationsansicht"
     },
     {
       "image": "/images/installation-19-poster-diplom-final-zeichenflche-1-small.webp",
       "fig": "CGD-25.01",
-      "caption": "“chronos - constant growth constant decay” (2025) - Poster"
+      "caption": "“chronos - constant growth constant decay” (2025) - Poster",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - Poster"
     },
     {
       "image": "/images/installation-20-diplom-2025-julius-niemeyer-chronos-2025.webp",
       "fig": "CGD-25.02",
-      "caption": "“chronos - constant growth constant decay” (2025) - installation view"
+      "caption": "“chronos - constant growth constant decay” (2025) - installation view",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - Installationsansicht"
     },
     {
       "image": "/images/installation-21-diplom-2025-julius-niemeyer-chronos-2025.webp",
       "fig": "CGD-25.03",
-      "caption": "“chronos - constant growth constant decay” (2025) - installation view, accompanying poster series"
+      "caption": "“chronos - constant growth constant decay” (2025) - installation view, accompanying poster series",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - Installationsansicht, begleitende Posterserie"
     },
     {
       "image": "/images/installation-22-ds14730.webp",
       "fig": "CGD-25.04",
-      "caption": "“chronos - constant growth constant decay” (2025) - self build geophones and speaker combination sending sound impulse through scagliola and metal plates"
+      "caption": "“chronos - constant growth constant decay” (2025) - self build geophones and speaker combination sending sound impulse through scagliola and metal plates",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - selbstgebaute Kombination aus Geophonen und Lautsprecher, die Klangimpulse durch Scagliola und Metallplatten senden"
     },
     {
       "image": "/images/installation-23-diplom-2025-julius-niemeyer-chronos-2025.webp",
       "fig": "CGD-25.05",
-      "caption": "“chronos - constant growth constant decay” (2025) - engineered and 3dprinted horn sculpture interfacing wall"
+      "caption": "“chronos - constant growth constant decay” (2025) - engineered and 3dprinted horn sculpture interfacing wall",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - konstruierte, 3D-gedruckte Horn-Skulptur als Schnittstelle zur Wand"
     },
     {
       "image": "/images/installation-24-diplom-2025-julius-niemeyer-chronos-2025.webp",
       "fig": "CGD-25.06",
-      "caption": "“chronos - constant growth constant decay” (2025) - installed geiger counters sending impulses into the system"
+      "caption": "“chronos - constant growth constant decay” (2025) - installed geiger counters sending impulses into the system",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - installierte Geigerzähler, die Impulse in das System senden"
     },
     {
       "image": "/images/installation-25-diplom-2025-julius-niemeyer-chronos-2025.webp",
       "fig": "CGD-25.07",
-      "caption": "“chronos - constant growth constant decay” (2025) - antennas collecting datastreams and injecting into the central server"
+      "caption": "“chronos - constant growth constant decay” (2025) - antennas collecting datastreams and injecting into the central server",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - Antennen, die Datenströme sammeln und in den zentralen Server einspeisen"
     },
     {
       "image": "/images/installation-26-diplom-2025-julius-niemeyer-chronos-2025.webp",
       "fig": "CGD-25.08",
-      "caption": "“chronos - constant growth constant decay” (2025) - signage"
+      "caption": "“chronos - constant growth constant decay” (2025) - signage",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - Beschilderung"
     },
     {
       "image": "/images/installation-27-ds14724.webp",
       "fig": "CGD-25.09",
-      "caption": "“chronos - constant growth constant decay” (2025) - self build geophones and speaker combination sending sound impulse through scagliola and metal plates"
+      "caption": "“chronos - constant growth constant decay” (2025) - self build geophones and speaker combination sending sound impulse through scagliola and metal plates",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - selbstgebaute Kombination aus Geophonen und Lautsprecher, die Klangimpulse durch Scagliola und Metallplatten senden"
     },
     {
       "image": "/images/installation-28-diplom-2025-julius-niemeyer-chronos-2025.webp",
       "fig": "CGD-25.10",
-      "caption": "“chronos - constant growth constant decay” (2025) - central computation server"
+      "caption": "“chronos - constant growth constant decay” (2025) - central computation server",
+      "caption_de": "“chronos - constant growth constant decay” (2025) - zentraler Rechenserver"
     },
     {
       "image": "/images/installation-29-20210722-114811738-ios.webp",
       "fig": "SOS-21.01",
-      "caption": "“sonic sync” (2021) - Group Performance @ Lenbachhaus Munich"
+      "caption": "“sonic sync” (2021) - Group Performance @ Lenbachhaus Munich",
+      "caption_de": "“sonic sync” (2021) - Gruppenperformance @ Lenbachhaus München"
     },
     {
       "image": "/images/installation-30-20210722-114755142-ios.webp",
       "fig": "SOS-21.02",
-      "caption": "“sonic sync” (2021) - Group Performance @ Lenbachhaus Munich"
+      "caption": "“sonic sync” (2021) - Group Performance @ Lenbachhaus Munich",
+      "caption_de": "“sonic sync” (2021) - Gruppenperformance @ Lenbachhaus München"
     }
   ]
 }

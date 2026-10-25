@@ -6,6 +6,7 @@
 //   5 · Feld – one of three experiments at the end of the page, chosen at random on every load
 (() => {
 	'use strict';
+	const DE = document.documentElement.lang === 'de'; // /de/ pages: German labels
 	const root = document.documentElement;
 	const $ = (s, el = document) => el.querySelector(s);
 	const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -306,7 +307,7 @@
 						ctx.fillRect(wall, 0, 1, H);
 					}
 					const S = -hist.reduce((s, n) => (n ? s + (n / ps.length) * Math.log(n / ps.length) : s), 0) / Math.log(BINS);
-					return `S = ${S.toFixed(2)} — ${open ? 'the wall is open' : 'wall closed'} · click to restore order`;
+					return `S = ${S.toFixed(2)} — ${DE ? (open ? 'die Wand ist offen' : 'Wand geschlossen') : open ? 'the wall is open' : 'wall closed'} · ${DE ? 'klicken, um Ordnung wiederherzustellen' : 'click to restore order'}`;
 				},
 			};
 		})(),
@@ -343,7 +344,7 @@
 						ctx.fillRect(f.x - 2.5, f.y - 2.5, 5, 5);
 					}
 					if (n < cells.length * 0.01) this.setup(now);
-					return `N = ${n} / ${cells.length} · T½ = 8 s — click to start again`;
+					return `N = ${n} / ${cells.length} · T½ = 8 s — ${DE ? 'klicken, um neu zu starten' : 'click to start again'}`;
 				},
 			};
 		})(),
@@ -462,7 +463,7 @@
 		} catch {}
 		if (on) unlock();
 		tonButtons.forEach((b) => {
-			b.textContent = `Sound: ${on ? 'on' : 'off'}`;
+			b.textContent = `Sound: ${DE ? (on ? 'an' : 'aus') : on ? 'on' : 'off'}`;
 			b.setAttribute('aria-pressed', String(on));
 		});
 	}
@@ -488,8 +489,11 @@
 		ask.setAttribute('role', 'dialog');
 		ask.setAttribute('aria-label', 'Sound');
 		ask.innerHTML =
-			'<div class="ton-box"><p>This page measures decay.<br>Geiger counter clicks — with sound?</p>' +
-			'<p><button type="button" data-on="1">Sound on</button> <button type="button" data-on="0">Sound off</button></p></div>';
+			(DE
+				? '<div class="ton-box"><p>Diese Seite misst Zerfall.<br>Geigerzähler-Klicken — mit Ton?</p>' +
+				  '<p><button type="button" data-on="1">Sound an</button> <button type="button" data-on="0">Sound aus</button></p></div>'
+				: '<div class="ton-box"><p>This page measures decay.<br>Geiger counter clicks — with sound?</p>' +
+				  '<p><button type="button" data-on="1">Sound on</button> <button type="button" data-on="0">Sound off</button></p></div>');
 		ask.addEventListener('click', (e) => {
 			const b = e.target.closest('button');
 			if (!b) return;

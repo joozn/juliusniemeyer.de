@@ -77,6 +77,19 @@ test('without switches: coming soon, no drafts, no withdrawal page', async () =>
 	assert.ok(!exists(dir, 'agb.html') && !exists(dir, 'widerrufen.html'));
 	assert.ok(exists(dir, 'danke.html') && exists(dir, 'abbruch.html'));
 	assert.doesNotMatch(page(dir, 'index.html'), /widerrufen\.html/);
+	// German version under /de/: own language, assets one level up, hreflang pair, both in the sitemap
+	const de = page(dir, 'de/index.html');
+	assert.match(de, /<html lang="de">/);
+	assert.match(de, /href="\.\.\/assets\/style\.css"/);
+	assert.match(de, /src="\.\.\/images\//);
+	assert.match(de, /rel="canonical" href="https:\/\/juliusniemeyer\.de\/de\/"/);
+	assert.match(de, /hreflang="en" href="https:\/\/juliusniemeyer\.de\/"/);
+	assert.match(de, /Systeme, Netzwerke und Prozesse/);
+	assert.match(page(dir, 'index.html'), /hreflang="de" href="https:\/\/juliusniemeyer\.de\/de\/"/);
+	assert.match(page(dir, 'de/available.html'), /Bald verfügbar/);
+	const sitemap = page(dir, 'sitemap.xml');
+	assert.match(sitemap, /<loc>https:\/\/juliusniemeyer\.de\/<\/loc>/);
+	assert.match(sitemap, /<loc>https:\/\/juliusniemeyer\.de\/de\/<\/loc>/);
 });
 
 test('SHOP_PREVIEW without SPINE: example data, drafts, withdrawal by email', async () => {

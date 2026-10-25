@@ -28,6 +28,14 @@ Bildkontrast 70 % der Option; Scrollbar wird beim Überfahren breit in Akzentfar
   Nie neu durchnummerieren. Neue Bilder ohne `fig` bekommen beim Build die nächste freie Nummer ihres Projekts.
 - **Datum oben rechts** = Tag des letzten Commits (automatisch). Optional „Aktuell“-Zeile (`aktuell`, `aktuell_bis` in site.json).
 
+## Zweisprachig (EN/DE)
+
+Englisch liegt unter `/`, Deutsch unter `/de/` (nur Startseite und „Available“-Platzhalter; Shop-Seiten und Rechtstexte bleiben wie sie sind).
+Deutsche Texte stehen als `*_de`-Felder neben den englischen in `content/*.json` (`title_de`, `intro_de`, `caption_de`, `column_1_de` …);
+fehlt ein Feld, nimmt der Build den englischen Text. Umschalter EN/DE im Header, `hreflang` + beide Sprachen in `sitemap.xml`.
+Texte der Laborelemente: `DE`-Weiche oben in `assets/labor.js`. Node lokal: `export PATH=$HOME/.local/node/bin:$PATH`.
+Search Console: Property `https://juliusniemeyer.de/` bestätigt per Datei `google3a07b8437e504407.html` (nicht löschen), Sitemap eingereicht.
+
 ## Konzept und Laborelemente
 
 Konzept der Seite (Erscheinung, fig.-Nummern, Laborelemente 1–5, Regeln): **`KONZEPT.md`** – vor Designänderungen lesen.
