@@ -560,7 +560,7 @@ ${footer}
 	if (SHOP_LIVE) checkLiveLegal();
 	await loadAvailable();
 	fs.mkdirSync(OUT, { recursive: true });
-	for (const f of ['assets', 'admin', 'favicon.ico', 'favicon.svg', 'og-image.jpg', 'CNAME']) {
+	for (const f of ['assets', 'admin', 'favicon.ico', 'favicon.svg', 'og-image.jpg', 'google3a07b8437e504407.html', 'CNAME']) {
 		if (fs.existsSync(f)) fs.cpSync(f, path.join(OUT, f), { recursive: true });
 	}
 	const img = await processImages();
@@ -577,5 +577,8 @@ ${footer}
 	const pages = legal.filter((p) => SHOP || !p.entwurf);
 	pages.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
+	// Only the home page is indexable; every other page is noindex.
+	fs.writeFileSync(path.join(OUT, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n\t<url><loc>https://juliusniemeyer.de/</loc></url>\n</urlset>\n');
+	fs.writeFileSync(path.join(OUT, 'robots.txt'), 'User-agent: *\nAllow: /\n\nSitemap: https://juliusniemeyer.de/sitemap.xml\n');
 	console.log(`built ${img.size} images, ${4 + (SHOP ? 1 : 0) + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
 })();
