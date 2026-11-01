@@ -5,6 +5,7 @@ backend:
   name: github
   repo: joozn/juliusniemeyer.de
   branch: main
+  base_url: https://studio.studioniemeyer.de/cms-auth   # Login über den Mainframe (kein extra Passwort)
   commit_messages:
     update: "Inhalt aktualisiert: {{slug}}"
     uploadMedia: "Bild hochgeladen: {{path}}"
