@@ -1,5 +1,5 @@
 # juliusniemeyer.de – Website von Julius als Künstler, mit vorbereitetem Werk-Shop
-> Art: Website · Ordner `C:\dev\01_websites\juliusniemeyer-web` · Repo `github.com/joozn/juliusniemeyer.de` (Push auf main = Deploy) · App-ID `website` · https://juliusniemeyer.de · Stand: 2026-11-01
+> Art: Website · Ordner `C:\dev\01_websites\juliusniemeyer-web` · Repo `github.com/joozn/juliusniemeyer.de` (Push auf main = Deploy) · App-ID `website` · https://juliusniemeyer.de · Stand: 2026-11-02
 
 ## Was ist das
 Die persönliche Künstler-Website von Julius: Werkgruppen (Installation, Flat Works, Other), Artist Statement, CV.
@@ -18,13 +18,13 @@ die Website zeigt nur an.
 - Shop-Code fertig: Live-Schalter `SHOP_LIVE`, Widerrufsfunktion (§ 356a BGB), `npm test` 7 Fälle grün (a15a478).
   SPINE-Kanal `juliusniemeyer` ist auf dem Server veröffentlicht (14.10.).
 - `favicon.ico` und `og-image.jpg` sind wieder da (15.10.).
-- CMS-Login über den Mainframe (1.11.2026): `admin/config.yml` `base_url` → `https://studio.studioniemeyer.de/cms-auth`. Mainframe gibt den GitHub-Token (fine-grained, nur dieses Repo, läuft Ende Oktober 2027 ab) nach seiner Anmeldung nur an juliusniemeyer.de weiter; Mainframe-Kachel „Website“ → „Inhalte pflegen“. Mainframe live; die Config-Änderung ist ab Push live, Test von /admin steht aus.
+- CMS-Login über den Mainframe (1.11.2026): Mainframe live (103ee9f, Route `/cms-auth/auth`, Knopf „Inhalte pflegen“ in der Kachel „Website“); Token (fine-grained, nur dieses Repo, läuft Okt. 2027 ab) liegt als `STUDIO_CMS_TOKEN_WEBSITE` auf dem Server und geht nur an juliusniemeyer.de. `admin/config.yml` hat `base_url: https://studio.studioniemeyer.de/cms-auth` – **noch nicht auf main**: liegt auf Zweig `claude/cms-login` (3bbc37f, gepusht, kein Deploy). /admin ist noch ungetestet.
 
 ## Wie es weitergeht
 1. Shop live schalten im gemeinsamen Deploy-Termin nach SPINE, Ablauf in `deploy/RUNBOOK-SHOP-LIVE.md`
    (Variablen `SHOP_LIVE=1`, `SPINE_URL=https://oeuvre.studioniemeyer.de`). Der Build bricht ab, solange Rechtstexte Entwurf sind.
 2. Testkauf (Karte 4242 + PayPal, danach erstatten), danach zurück auf „Coming soon“, bis Julius den echten Start freigibt.
-3. /admin nach dem Push einmal testen; Token vor Ablauf (Okt. 2027) erneuern: `set-cms-token.sh` im Mainframe.
+3. Zweig `claude/cms-login` mit Julius' OK nach `main` (= Deploy der Seite), dann /admin im Browser testen (Mainframe-Login → „Inhalte pflegen“); danach Zweig löschen, im Mainframe `claude/cms-login` samt Worktree aufräumen, Mainframe-CLAUDE.md „Stand“ + Tag `live-2026-11-01c`; Token vor Ablauf (Okt. 2027) erneuern: `set-cms-token.sh` im Mainframe.
 
 Wartet auf Julius:
 - Rechtstexte AGB, Widerruf, Versand über eRecht24 prüfen, Datenschutz um Stripe und PayPal ergänzen (E12).
