@@ -186,6 +186,8 @@ em {
 	color: var(--text);
 }
 .nav-available { white-space: nowrap; }
+.lang { margin-right: 1.2em; white-space: nowrap; }
+.bar--top .lang a[aria-current] { color: var(--text); }
 .aktuell {
 	margin-left: 2.5em;
 }

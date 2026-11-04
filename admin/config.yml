@@ -40,7 +40,9 @@ collections:
         file: content/works/installation.json
         fields:
           - { label: Titel, name: title, widget: string }
+          - { label: Titel (Deutsch), name: title_de, widget: string, required: false, hint: "Leer = englischer Titel auf der deutschen Seite." }
           - { label: Einleitungstext, name: intro, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - { label: Einleitungstext (Deutsch), name: intro_de, widget: markdown, buttons: [bold, italic, link], editor_components: [], required: false, hint: "Leer = englischer Text auf der deutschen Seite." }
           - &images
             label: Bilder
             name: images
@@ -62,19 +64,30 @@ collections:
                 buttons: [bold, italic, link]
                 editor_components: []
                 hint: "Neue Zeile = Zeilenumbruch, Leerzeile = Absatz."
+              - label: Bildunterschrift (Deutsch)
+                name: caption_de
+                widget: markdown
+                required: false
+                buttons: [bold, italic, link]
+                editor_components: []
+                hint: "Für die deutsche Seite. Leer = englische Bildunterschrift."
       - name: flat-works
         label: Flat Works
         file: content/works/flat-works.json
         fields:
           - { label: Titel, name: title, widget: string }
+          - { label: Titel (Deutsch), name: title_de, widget: string, required: false, hint: "Leer = englischer Titel auf der deutschen Seite." }
           - { label: Einleitungstext, name: intro, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - { label: Einleitungstext (Deutsch), name: intro_de, widget: markdown, buttons: [bold, italic, link], editor_components: [], required: false, hint: "Leer = englischer Text auf der deutschen Seite." }
           - *images
       - name: other
         label: Other
         file: content/works/other.json
         fields:
           - { label: Titel, name: title, widget: string }
+          - { label: Titel (Deutsch), name: title_de, widget: string, required: false, hint: "Leer = englischer Titel auf der deutschen Seite." }
           - { label: Einleitungstext, name: intro, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - { label: Einleitungstext (Deutsch), name: intro_de, widget: markdown, buttons: [bold, italic, link], editor_components: [], required: false, hint: "Leer = englischer Text auf der deutschen Seite." }
           - *images
 
   - name: texts
@@ -86,8 +99,11 @@ collections:
         file: content/statement.json
         fields:
           - { label: Titel (linke Spalte), name: title, widget: string }
+          - { label: Titel (linke Spalte, Deutsch), name: title_de, widget: string, required: false }
           - { label: Mittlere Spalte, name: column_1, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
           - { label: Rechte Spalte, name: column_2, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+          - { label: Mittlere Spalte (Deutsch), name: column_1_de, widget: markdown, buttons: [bold, italic, link], editor_components: [], required: false }
+          - { label: Rechte Spalte (Deutsch), name: column_2_de, widget: markdown, buttons: [bold, italic, link], editor_components: [], required: false }
       - name: cv
         label: CV
         file: content/cv.json
@@ -108,6 +124,24 @@ collections:
             widget: markdown
             buttons: [bold, italic, link, heading-one, heading-two]
             editor_components: []
+          - label: Spalte 1 (Deutsch)
+            name: column_1_de
+            widget: markdown
+            buttons: [bold, italic, link, heading-one, heading-two]
+            editor_components: []
+            required: false
+          - label: Spalte 2 (Deutsch)
+            name: column_2_de
+            widget: markdown
+            buttons: [bold, italic, link, heading-one, heading-two]
+            editor_components: []
+            required: false
+          - label: Spalte 3 (Deutsch)
+            name: column_3_de
+            widget: markdown
+            buttons: [bold, italic, link, heading-one, heading-two]
+            editor_components: []
+            required: false
 
   - name: settings
     label: Einstellungen
@@ -124,9 +158,11 @@ collections:
             hint: "Erscheint oben neben dem Namen, z. B. Ausstellung ankündigen. Links als [Text](https://…). Leer = keine Zeile. Das Datum oben rechts setzt sich automatisch (letzte Änderung)."
           - { label: Aktuell bis, name: aktuell_bis, widget: datetime, required: false, time_format: false, format: "YYYY-MM-DD", hint: "Ab dem Tag danach verschwindet die Zeile von selbst. Leer = bleibt stehen." }
           - { label: Zitat in der Fußzeile, name: footer_quote, widget: string }
+          - { label: Zitat in der Fußzeile (Deutsch), name: footer_quote_de, widget: string, required: false }
           - { label: Text unten rechts, name: footer_credit, widget: string }
           - { label: E-Mail-Adresse, name: email, widget: string }
           - { label: Beschreibung für Google, name: description, widget: text, hint: "Erscheint in Suchergebnissen. Ca. 150 Zeichen." }
+          - { label: Beschreibung für Google (Deutsch), name: description_de, widget: text, required: false, hint: "Für die deutsche Seite (/de/). Ca. 150 Zeichen." }
       - name: impressum
         label: Impressum
         file: content/legal/impressum.json

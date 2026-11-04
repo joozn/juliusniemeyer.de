@@ -68,6 +68,14 @@ Deploy: Push auf `main` → GitHub Actions baut und lädt per rsync nach `/opt/w
 - Shop-Pfade: `/available.html`, `/danke.html?o={orderId}`, `/abbruch.html`, `/widerrufen.html`
   (POST an `<SPINE>/api/public/shop/juliusniemeyer/withdrawal`, Link „Vertrag widerrufen“ im Footer).
 
+## Zweisprachig (EN/DE)
+
+Englisch liegt unter `/`, Deutsch unter `/de/` (nur Startseite und „Available“-Platzhalter; Shop-Seiten und Rechtstexte bleiben wie sie sind).
+Deutsche Texte stehen als `*_de`-Felder neben den englischen in `content/*.json` (`title_de`, `intro_de`, `caption_de`, `column_1_de` …);
+fehlt ein Feld, nimmt der Build den englischen Text. Umschalter EN/DE im Header, `hreflang` + beide Sprachen in `sitemap.xml`.
+Texte der Laborelemente: `DE`-Weiche oben in `assets/labor.js`. Node lokal: `export PATH=$HOME/.local/node/bin:$PATH`.
+Search Console: Property `https://juliusniemeyer.de/` bestätigt per Datei `google3a07b8437e504407.html` (nicht löschen), Sitemap eingereicht.
+
 ## Betrieb
 - Server Hetzner `root@46.224.113.239`: `/opt/website/` (`docker-compose.yml` + `Caddyfile` aus `deploy/`), Container
   `website` (caddy:2, read-only, 64 MB) liefert `/opt/website/site` im Docker-Netz `web`.

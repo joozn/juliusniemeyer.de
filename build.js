@@ -11,6 +11,9 @@ const read = (f) => JSON.parse(fs.readFileSync(path.join('content', f), 'utf8'))
 const md = (s = '') => marked.parse(s, { breaks: true });
 const mdInline = (s = '') => marked.parseInline(s);
 const esc = (s = '') => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+// German variant of a content field: <key>_de, falls back to the English text while it is empty
+const tr = (o, k, lang) => (lang === 'de' && o[k + '_de']) || o[k];
+const ORIGIN = 'https://juliusniemeyer.de';
 const plain = (s = '') => s.replace(/[*_`#>[\]]/g, '').replace(/\(([^)]*)\)$/, '').trim();
 
 const site = read('site.json');
@@ -146,7 +149,7 @@ async function cornerIsLight(file) {
 
 /* ---------- shared page parts ---------- */
 
-const head = ({ title, description, lang = 'en', robots = 'index, follow', extra = '' }) => `<!DOCTYPE html>
+const head = ({ title, description, lang = 'en', robots = 'index, follow', extra = '', root = '' }) => `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
 	<meta charset="utf-8">
@@ -155,29 +158,38 @@ const head = ({ title, description, lang = 'en', robots = 'index, follow', extra
 	<meta name="description" content="${esc(description)}">
 	<meta name="robots" content="${robots}">
 	<meta name="theme-color" content="#0a0b1d">
-	<link rel="icon" href="favicon.ico" sizes="any">
-	<link rel="icon" href="favicon.svg" type="image/svg+xml">
-	<link rel="preload" href="assets/fonts/Geist.woff2" as="font" type="font/woff2" crossorigin>
-	<link rel="stylesheet" href="assets/style.css">
+	<link rel="icon" href="${root}favicon.ico" sizes="any">
+	<link rel="icon" href="${root}favicon.svg" type="image/svg+xml">
+	<link rel="preload" href="${root}assets/fonts/Geist.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="stylesheet" href="${root}assets/style.css">
 ${extra}</head>
 <body>
 `;
 
-const worksNav = `Works: ${works.map((w) => `<a href="./#${w.anchor}">${esc(w.title)},</a>`).join(' ')} <a href="./#cv">CV</a>`;
+const worksNav = (lang) =>
+	`${lang === 'de' ? 'Werke' : 'Works'}: ${works.map((w) => `<a href="./#${w.anchor}">${esc(tr(w, 'title', lang))},</a>`).join(' ')} <a href="./#cv">${lang === 'de' ? 'Lebenslauf' : 'CV'}</a>`;
 
 // "Available" sits apart from the works, in its own column
-const header = (page) => {
-	const av = `<a href="available.html" class="nav-available${page === 'available' ? ' is-here' : ''}">Available</a>`;
+// lang: 'en' (root) or 'de' (/de/, one level down). switchTo: URL of the other language version, if the page has one.
+const header = (page, lang = 'en', switchTo = '') => {
+	const de = lang === 'de';
+	const root = de ? '../' : '';
+	// the shop pages exist in English only: while the shop is live, German visitors go to the English page
+	const avHref = de && SHOP ? '../available.html' : 'available.html';
+	const av = `<a href="${avHref}" class="nav-available${page === 'available' ? ' is-here' : ''}">${de ? 'Verfügbar' : 'Available'}</a>`;
+	const sw = switchTo
+		? `<span class="lang"><a href="${de ? switchTo : './'}" hreflang="en" lang="en"${de ? '' : ' aria-current="true"'}>EN</a> <a href="${de ? './' : switchTo}" hreflang="de" lang="de"${de ? ' aria-current="true"' : ''}>DE</a></span> `
+		: '';
 	return `<header class="bar bar--top">
 	<div class="cols bar-cols desktop-only">
 		<div class="span-4"><a href="./#top" class="home">juliusniemeyer</a>${aktuell}</div>
 		<div class="span-2">${av}</div>
-		<nav class="span-4" aria-label="Works">${worksNav}</nav>
-		<div class="span-2 right">${stand}</div>
+		<nav class="span-4" aria-label="${de ? 'Werke' : 'Works'}">${worksNav(lang)}</nav>
+		<div class="span-2 right">${sw}${stand}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
 		<div><a href="./#top" class="home">juliusniemeyer</a> ${av}${aktuell}</div>
-		<div class="right">${stand}</div>
+		<div class="right">${sw}${stand}</div>
 	</div>
 	<div class="progress" aria-hidden="true"></div>
 </header>
@@ -185,42 +197,53 @@ const header = (page) => {
 };
 
 // electronic withdrawal function (§ 356a BGB) must be easy to find on every page while the shop is on
-const withdrawLink = (sep) => (SHOP ? `${sep} <a href="widerrufen.html">Vertrag widerrufen</a>` : '');
+const withdrawLink = (sep, root = '') => (SHOP ? `${sep} <a href="${root}widerrufen.html">Vertrag widerrufen</a>` : '');
 
-const footer = `<footer class="bar bar--bottom">
+const footerFor = (lang = 'en') => {
+	const de = lang === 'de';
+	const root = de ? '../' : '';
+	return `<footer class="bar bar--bottom">
 	<div class="cols bar-cols desktop-only">
-		<div class="span-6">${emailLink('Email,')} <a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de,</a> <a href="impressum.html">Impressum,</a> <a href="datenschutz.html">Datenschutz</a>${withdrawLink(',')}</div>
-		<div class="span-4">${esc(site.footer_quote)}</div>
+		<div class="span-6">${emailLink(de ? 'E-Mail,' : 'Email,')} <a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de,</a> <a href="${root}impressum.html">Impressum,</a> <a href="${root}datenschutz.html">Datenschutz</a>${withdrawLink(',', root)}</div>
+		<div class="span-4">${esc(tr(site, 'footer_quote', lang))}</div>
 		<div class="span-2 right">${esc(site.footer_credit)}</div>
 	</div>
 	<div class="cols bar-cols mobile-only">
-		<div>${emailLink('Email')}${withdrawLink('')}</div>
-		<nav class="right" aria-label="Works">${worksNav}</nav>
+		<div>${emailLink(de ? 'E-Mail' : 'Email')}${withdrawLink('', root)}</div>
+		<nav class="right" aria-label="${de ? 'Werke' : 'Works'}">${worksNav(lang)}</nav>
 	</div>
 </footer>
 `;
+};
+const footer = footerFor('en');
 
-const lightbox = `<div class="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+const lightboxFor = (lang = 'en') => {
+	const L = lang === 'de' ? ['Bildbetrachter', 'Schließen', 'Vorheriges Bild', 'Nächstes Bild'] : ['Image viewer', 'Close', 'Previous image', 'Next image'];
+	return `<div class="lightbox" role="dialog" aria-modal="true" aria-label="${L[0]}" hidden>
 	<img alt="">
 	<div class="lb-meta"><span class="lb-count"></span><span class="lb-caption"></span></div>
-	<button class="lb-btn lb-close" type="button" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
-	<button class="lb-btn lb-prev" type="button" aria-label="Previous image"><svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5"/></svg></button>
-	<button class="lb-btn lb-next" type="button" aria-label="Next image"><svg viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/></svg></button>
+	<button class="lb-btn lb-close" type="button" aria-label="${L[1]}"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
+	<button class="lb-btn lb-prev" type="button" aria-label="${L[2]}"><svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5"/></svg></button>
+	<button class="lb-btn lb-next" type="button" aria-label="${L[3]}"><svg viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/></svg></button>
 </div>
 `;
+};
+const lightbox = lightboxFor('en');
 
 /* ---------- pages ---------- */
 
-function indexPage(img) {
+function indexPage(img, lang = 'en') {
+	const de = lang === 'de';
+	const root = de ? '../' : '';
 	const gallery = (w) => {
 		const figs = (w.images || [])
 			.filter((it) => img.has(it.image))
 			.map((it, i) => {
 				const im = img.get(it.image);
-				const caption = (it.caption || '').trim();
-				const alt = plain(caption.split('\n')[0]);
+				const caption = (tr(it, 'caption', lang) || '').trim();
+				const alt = plain(caption.split('\n')[0]) || `${tr(w, 'title', lang)}, fig. ${it.fig}`;
 				return `		<figure data-fig="${esc(it.fig)}"${im.light ? ' class="on-light"' : ''}>
-			<img src="${im.small}" data-full="${im.big}" width="${im.width}" height="${im.height}" alt="${esc(alt)}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async">
+			<img src="${root}${im.small}" data-full="${root}${im.big}" width="${im.width}" height="${im.height}" alt="${esc(alt)}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async">
 ${caption ? `			<figcaption>${md(caption).trim()}</figcaption>\n` : ''}		</figure>`;
 			})
 			.join('\n');
@@ -230,9 +253,9 @@ ${caption ? `			<figcaption>${md(caption).trim()}</figcaption>\n` : ''}		</figur
 	const sections = works
 		.map(
 			(w) => `	<section id="${w.anchor}" class="intro cols">
-		<h1 class="span-8">${esc(w.title)}</h1>
+		<h1 class="span-8">${esc(tr(w, 'title', lang))}</h1>
 		<div class="span-4">
-			${md(w.intro).trim()}
+			${md(tr(w, 'intro', lang)).trim()}
 		</div>
 	</section>
 
@@ -241,52 +264,59 @@ ${gallery(w)}
 		)
 		.join('\n');
 
-	const ldjson = `	<link rel="canonical" href="https://juliusniemeyer.de/">
+	const url = ORIGIN + (de ? '/de/' : '/');
+	const desc = tr(site, 'description', lang);
+	const ldjson = `	<link rel="canonical" href="${url}">
+	<link rel="alternate" hreflang="en" href="${ORIGIN}/">
+	<link rel="alternate" hreflang="de" href="${ORIGIN}/de/">
+	<link rel="alternate" hreflang="x-default" href="${ORIGIN}/">
 	<meta name="author" content="Julius Niemeyer">
 	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://juliusniemeyer.de/">
-	<meta property="og:title" content="Julius Niemeyer — Artist | Systems, Networks, Processes">
-	<meta property="og:description" content="${esc(site.description)}">
-	<meta property="og:image" content="https://juliusniemeyer.de/og-image.jpg">
+	<meta property="og:url" content="${url}">
+	<meta property="og:locale" content="${de ? 'de_DE' : 'en_GB'}">
+	<meta property="og:locale:alternate" content="${de ? 'en_GB' : 'de_DE'}">
+	<meta property="og:title" content="${de ? 'Julius Niemeyer — Künstler | Systeme, Netzwerke, Prozesse' : 'Julius Niemeyer — Artist | Systems, Networks, Processes'}">
+	<meta property="og:description" content="${esc(desc)}">
+	<meta property="og:image" content="${ORIGIN}/og-image.jpg">
 	<meta name="twitter:card" content="summary_large_image">
-	<meta name="twitter:image" content="https://juliusniemeyer.de/og-image.jpg">
-	<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Julius Niemeyer","url":"https://juliusniemeyer.de/","jobTitle":"Artist","homeLocation":{"@type":"Place","name":"Munich"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Academy of Fine Arts Munich"}}</script>
+	<meta name="twitter:image" content="${ORIGIN}/og-image.jpg">
+	<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Julius Niemeyer","url":"${url}","jobTitle":"${de ? 'Künstler' : 'Artist'}","homeLocation":{"@type":"Place","name":"${de ? 'München' : 'Munich'}"},"alumniOf":{"@type":"CollegeOrUniversity","name":"${de ? 'Akademie der Bildenden Künste München' : 'Academy of Fine Arts Munich'}"}}</script>
 `;
 
-	return `${head({ title: 'Julius Niemeyer', description: site.description, extra: ldjson })}
-${header('index')}
+	return `${head({ title: de ? 'Julius Niemeyer – Künstler, München' : 'Julius Niemeyer – Artist, Munich', description: desc, lang, extra: ldjson, root })}
+${header('index', lang, de ? '../' : 'de/')}
 <main id="top">
 
-	<p class="hero">${esc(site.footer_quote)}</p>
+	<p class="hero">${esc(tr(site, 'footer_quote', lang))}</p>
 
 ${sections}
 	<section id="artist-statement" class="statement">
 		<hr>
 		<div class="cols thirds">
-			<h2 class="statement-title">${mdInline(statement.title)}</h2>
-			<div>${md(statement.column_1)}</div>
-			<div>${md(statement.column_2)}</div>
+			<h2 class="statement-title">${mdInline(tr(statement, 'title', lang))}</h2>
+			<div>${md(tr(statement, 'column_1', lang))}</div>
+			<div>${md(tr(statement, 'column_2', lang))}</div>
 		</div>
 	</section>
 
 	<section id="cv" class="cv">
 		<div class="cols thirds wide-gap">
-			<div>${md(cv.column_1)}</div>
-			<div>${md(cv.column_2)}</div>
-			<div>${md(cv.column_3)}</div>
+			<div>${md(tr(cv, 'column_1', lang))}</div>
+			<div>${md(tr(cv, 'column_2', lang))}</div>
+			<div>${md(tr(cv, 'column_3', lang))}</div>
 		</div>
 	</section>
 
 	<section class="feld" hidden><canvas aria-hidden="true"></canvas><p></p></section>
 	<p class="wordmark" aria-hidden="true">studioniemeyer</p>
-	<p class="legal mobile-legal"><a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de</a>, <a href="impressum.html">Impressum</a>, <a href="datenschutz.html">Datenschutz</a></p>
+	<p class="legal mobile-legal"><a href="https://studioniemeyer.de/labor/">Labor: studioniemeyer.de</a>, <a href="${root}impressum.html">Impressum</a>, <a href="${root}datenschutz.html">Datenschutz</a></p>
 
 </main>
 
-${footer}
-${lightbox}
-<script src="assets/main.js" defer></script>
-<script src="assets/labor.js" defer></script>
+${footerFor(lang)}
+${lightboxFor(lang)}
+<script src="${root}assets/main.js" defer></script>
+<script src="${root}assets/labor.js" defer></script>
 </body>
 </html>
 `;
@@ -352,22 +382,27 @@ async function loadAvailable() {
 	if (SHOP_LIVE && !available.werke.length) fail('SPINE sent no works with a fig. number');
 }
 
-function comingSoonPage() {
-	return `${head({ title: 'Available - Julius Niemeyer', description: 'Works and editions by Julius Niemeyer — coming soon.' })}
-${header('available')}
+function comingSoonPage(lang = 'en') {
+	const de = lang === 'de';
+	const root = de ? '../' : '';
+	const page = de
+		? { title: 'Verfügbar', text: ['Bald verfügbar.', `Hier erscheinen Editionen und Arbeiten, die aktuell erhältlich sind. Bis dahin: ${emailLink('schreib eine E-Mail')}.`] }
+		: { title: 'Available', text: ['Coming soon.', `Editions and works that are currently available will be listed here. Until then: ${emailLink('write an email')}.`] };
+	return `${head(de ? { title: 'Verfügbar - Julius Niemeyer', description: 'Werke und Editionen von Julius Niemeyer — bald verfügbar.', lang, robots: 'noindex, follow', root } : { title: 'Available - Julius Niemeyer', description: 'Works and editions by Julius Niemeyer — coming soon.' })}
+${header('available', lang, de ? '../available.html' : 'de/available.html')}
 <main id="top">
 	<section class="intro cols legal-page">
-		<h1 class="span-8">Available</h1>
+		<h1 class="span-8">${page.title}</h1>
 		<div class="span-4">
-			<p>Coming soon.</p>
-			<p>Editions and works that are currently available will be listed here. Until then: ${emailLink('write an email')}.</p>
+			<p>${page.text[0]}</p>
+			<p>${page.text[1]}</p>
 		</div>
 	</section>
 </main>
 
-${footer}
-<script src="assets/main.js" defer></script>
-<script src="assets/labor.js" defer></script>
+${footerFor(lang)}
+<script src="${root}assets/main.js" defer></script>
+<script src="${root}assets/labor.js" defer></script>
 </body>
 </html>
 `;
@@ -560,13 +595,17 @@ ${footer}
 	if (SHOP_LIVE) checkLiveLegal();
 	await loadAvailable();
 	fs.mkdirSync(OUT, { recursive: true });
-	for (const f of ['assets', 'admin', 'favicon.ico', 'favicon.svg', 'og-image.jpg', 'CNAME']) {
+	for (const f of ['assets', 'admin', 'favicon.ico', 'favicon.svg', 'og-image.jpg', 'google3a07b8437e504407.html', 'CNAME']) {
 		if (fs.existsSync(f)) fs.cpSync(f, path.join(OUT, f), { recursive: true });
 	}
 	const img = await processImages();
 	assignFigs();
 	fs.writeFileSync(path.join(OUT, 'index.html'), indexPage(img));
 	fs.writeFileSync(path.join(OUT, 'available.html'), SHOP ? availablePage(img) : comingSoonPage());
+	// German version under /de/ (the shop pages stay English only)
+	fs.mkdirSync(path.join(OUT, 'de'), { recursive: true });
+	fs.writeFileSync(path.join(OUT, 'de', 'index.html'), indexPage(img, 'de'));
+	if (!SHOP) fs.writeFileSync(path.join(OUT, 'de', 'available.html'), comingSoonPage('de'));
 	// Always built (noindex): Stripe test payments redirect here even while Available shows "Coming soon".
 	fs.writeFileSync(path.join(OUT, 'danke.html'), thanksPage());
 	fs.writeFileSync(path.join(OUT, 'abbruch.html'), cancelPage());
@@ -577,5 +616,11 @@ ${footer}
 	const pages = legal.filter((p) => SHOP || !p.entwurf);
 	pages.forEach((p) => fs.writeFileSync(path.join(OUT, `${p.name}.html`), legalPage(p)));
 	fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-	console.log(`built ${img.size} images, ${4 + (SHOP ? 1 : 0) + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
+	// Only the home pages (EN and DE) are indexable; every other page is noindex.
+	const alt = (l, h) => `<xhtml:link rel="alternate" hreflang="${l}" href="${h}"/>`;
+	const links = [alt('en', `${ORIGIN}/`), alt('de', `${ORIGIN}/de/`), alt('x-default', `${ORIGIN}/`)].join('');
+	const sitemapUrls = [`${ORIGIN}/`, `${ORIGIN}/de/`].map((u) => `\n\t<url><loc>${u}</loc>${links}</url>`).join('');
+	fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${sitemapUrls}\n</urlset>\n`);
+	fs.writeFileSync(path.join(OUT, 'robots.txt'), 'User-agent: *\nAllow: /\n\nSitemap: https://juliusniemeyer.de/sitemap.xml\n');
+	console.log(`built ${img.size} images, ${6 + pages.length} pages in ${((Date.now() - t) / 1000).toFixed(1)}s`);
 })();
